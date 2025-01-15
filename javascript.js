@@ -2,7 +2,7 @@ let debounceTimeout; // Persistent debounce timer
 const MAX_QUERY_LENGTH = 15; // Maximum allowed query length
 
 document.getElementById('search-bar').addEventListener('input', function () {
-    const query = this.value.trim(); // Use trimmed input
+    const query = this.value.trim(); 
     const suggestionsContainer = document.getElementById('suggestions');
 
     // Clear suggestions if input is empty or exceeds max length
@@ -66,13 +66,13 @@ async function getSuggestions(query) {
                 div.onclick = () => {
                     document.getElementById('search-bar').value = suggestion;
                     suggestionsContainer.innerHTML = '';
-                    suggestionsContainer.style.display = 'none'; // Hide suggestions after selection
+                    suggestionsContainer.style.display = 'none';
                 };
 
                 suggestionsContainer.appendChild(div);
             });
         } else {
-            suggestionsContainer.style.display = 'none'; // Hide container when no suggestions
+            suggestionsContainer.style.display = 'none'; 
         }
     } catch (error) {
         console.error('Error fetching suggestions:', error);
