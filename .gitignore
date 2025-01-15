@@ -1,0 +1,21 @@
+# Build Folders
+bin/
+obj/
+
+# User-Specific Files
+.vs/
+*.suo
+*.user
+
+# Dependencies
+packages/
+node_modules/
+
+# Logs and Temporary Files
+*.log
+*.tmp
+*.cache
+
+# Secrets
+appsettings.*.json
+!appsettings.json
