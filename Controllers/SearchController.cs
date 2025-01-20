@@ -60,12 +60,6 @@ namespace SearchApi.Controllers
             return Ok(result);
         }
 
-
-
-
-
-
-
         [HttpPost("LogSearch")]
         public async Task<IActionResult> LogSearch([FromBody] string query)
         {
