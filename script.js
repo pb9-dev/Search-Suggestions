@@ -46,7 +46,7 @@ async function getSuggestions(query) {
                 const div = document.createElement('div');
                 div.className = 'suggestion-item';
 
-                // Choose icon based on history or not
+                // icon based on history or not
                 const icon = document.createElement('i');
                 icon.className = suggestion.isHistory
                     ? 'fa fa-globe suggestion-icon' // Globe for history
@@ -74,17 +74,11 @@ async function getSuggestions(query) {
         console.error('Error fetching suggestions:', error);
     }
 }
-
-
-
 async function logSearch(query) {
     try {
         await axios.post('http://localhost:5165/api/Search/LogSearch', query, {
             headers: { 'Content-Type': 'application/json' }
         });
-
-        // Optionally, refresh suggestions to include the new history
-        await getSuggestions(query);
     } catch (error) {
         console.error('Error logging search:', error);
     }
