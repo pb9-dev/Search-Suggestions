@@ -1,16 +1,22 @@
 let debounceTimeout;
-const MAX_QUERY_LENGTH = 15;
+const MAX_QUERY_LENGTH = 20;
 
 document.getElementById('search-bar').addEventListener('input', function () {
     const query = this.value.trim();
     const suggestionsContainer = document.getElementById('suggestions');
 
-    if (!query || query.length > MAX_QUERY_LENGTH) {
+    if (!query) {
         suggestionsContainer.innerHTML = '';
         suggestionsContainer.style.display = 'none';
         return;
     }
-
+    
+    if (query.length > MAX_QUERY_LENGTH) {
+        console.warn('Query exceeds the maximum allowed length.');
+        suggestionsContainer.innerHTML = '';
+        suggestionsContainer.style.display = 'none';
+        return;
+    }
     clearTimeout(debounceTimeout);
     debounceTimeout = setTimeout(async function () {
         await getSuggestions(query);
@@ -29,11 +35,12 @@ document.getElementById('search-bar').addEventListener('keydown', async function
 
 async function getSuggestions(query) {
     const suggestionsContainer = document.getElementById('suggestions');
-    suggestionsContainer.innerHTML = '';
+    suggestionsContainer.textContent = '';
 
     try {
         const response = await axios.get('http://localhost:5165/api/Search', {
             params: { query: query }
+   
         });
 
         let suggestions = response.data;
