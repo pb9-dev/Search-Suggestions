@@ -13,7 +13,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAllOrigins", policy =>
     {
-        policy.AllowAnyOrigin() // Allow requests from any origin
+        policy.WithOrigins("http://127.0.0.1:5500") // Allow requests from any origin
               .AllowAnyHeader()
               .AllowAnyMethod();
     });
@@ -25,12 +25,12 @@ builder.Services.AddControllers();
 // Register the Redis connection as a singleton
 builder.Services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect(builder.Configuration.GetConnectionString("Redis")));
 
-// Add DbContext for SQL Server (assuming you have already configured it in appsettings.json)
+// Add DbContext for SQL Server
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Add any other services (e.g., for caching, logging, etc.)
-builder.Services.AddMemoryCache(); // Optional, if you need to use MemoryCache for fallback caching
+builder.Services.AddMemoryCache(); 
 
 var app = builder.Build();
 app.UseCors("AllowAllOrigins");
@@ -45,8 +45,8 @@ app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
-// Map controllers
+
 app.MapControllers();
 
-// Run the app
+
 app.Run();

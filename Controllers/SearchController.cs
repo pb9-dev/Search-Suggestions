@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using StackExchange.Redis;
 using SearchApi.Models;
+using Microsoft.Data.SqlClient;
+
 namespace SearchApi.Controllers
 {
     [ApiController]
@@ -23,7 +25,10 @@ namespace SearchApi.Controllers
             if (string.IsNullOrWhiteSpace(query))
                 return BadRequest("Query cannot be empty.");
 
-            // Check Redis cache
+            if (query.Trim().Length <= 2)
+                return BadRequest("Suggestions are available only for queries with more than 3 letters.");
+
+            // Checking Redis cache
             var cacheKey = $"suggestions:{query.ToLower()}";
             var cachedSuggestions = await _redisCache.StringGetAsync(cacheKey);
             if (!cachedSuggestions.IsNullOrEmpty)
@@ -33,28 +38,37 @@ namespace SearchApi.Controllers
                 return Ok(cachedResults.Select(result => new { Text = result, IsHistory = false }));
             }
 
-            Console.WriteLine($"Cache miss for query: {query}. Fetching data from the database.");
+            Console.WriteLine($"Cache miss for query: {query}. Fetching data from the stored procedure.");
 
-            var historySuggestions = _context.SearchHistory
-                .Where(sh => EF.Functions.Like(sh.Query, $"{query}%"))
-                .Select(sh => new { Text = sh.Query, IsHistory = true });
+            // Executing the stored procedure and returning results
+            var allSuggestions = await _context.Suggestions
+                .FromSqlInterpolated($"EXEC GetSuggestions @Query = {query}")
+                .ToListAsync();
 
-            var indexSuggestions = _context.SearchIndex
-                .Where(si => EF.Functions.Like(si.Title, $"{query}%") || EF.Functions.Like(si.Keywords, $"{query}%"))
-                .Select(si => new { Text = si.Title + ", " + si.Keywords, IsHistory = false });
-
-            // Combine suggestions, sort by length, and return
-            var allSuggestions = historySuggestions
-                .Union(indexSuggestions)
+            // Process the results
+            var processedSuggestions = allSuggestions
                 .AsEnumerable()
                 .SelectMany(s => s.Text.Split(',').Select(w => new { Text = w.Trim(), IsHistory = s.IsHistory }))
-                .Where(word => word.Text.StartsWith(query, StringComparison.OrdinalIgnoreCase))
-                .Distinct()
-                .OrderBy(word => word.Text.Length)  // Order by text length
+                .Where(word =>
+                {
+                    if (word.Text.Contains(" ")) // multi-word suggestion
+                    {
+                        // Check if any word in the multi-word suggestion matches the query completely
+                        var words = word.Text.Split(' ');
+                        return words.Any(w => w.StartsWith(query, StringComparison.OrdinalIgnoreCase));
+                    }
+
+                    // For single-word suggestions, check if it starts with the query
+                    return word.Text.StartsWith(query, StringComparison.OrdinalIgnoreCase);
+                })
+                .GroupBy(word => word.Text.ToLower())
+                .Select(group => group.First())
+                .OrderByDescending(word => word.IsHistory)
                 .Take(10);
 
-            var result = allSuggestions.ToList();
+            var result = processedSuggestions.ToList();
 
+            // Store the result in Redis cache
             await _redisCache.StringSetAsync(cacheKey, string.Join("|", result.Select(r => r.Text)), TimeSpan.FromMinutes(5));
 
             return Ok(result);
@@ -88,6 +102,5 @@ namespace SearchApi.Controllers
 
             return Ok();
         }
-
     }
 }
