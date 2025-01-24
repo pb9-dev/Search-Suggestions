@@ -100,7 +100,7 @@ namespace SearchApi.Controllers
 
             await _context.SaveChangesAsync();
 
-            return Ok();
+            return Ok(); //201 response
         }
     }
 }
