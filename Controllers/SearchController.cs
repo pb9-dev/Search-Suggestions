@@ -25,9 +25,10 @@ namespace SearchApi.Controllers
             if (string.IsNullOrWhiteSpace(query))
                 return BadRequest("Query cannot be empty.");
 
-            if (query.Trim().Length <= 2)
-                return BadRequest("Suggestions are available only for queries with more than 3 letters.");
-
+            //if (query.Trim().Length <= 2)
+            //{
+            //    return BadRequest("Suggestions are available only for queries with more than 2 letters.");
+            //}
             // Checking Redis cache
             var cacheKey = $"suggestions:{query.ToLower()}";
             var cachedSuggestions = await _redisCache.StringGetAsync(cacheKey);
@@ -97,10 +98,57 @@ namespace SearchApi.Controllers
 
                 _context.SearchHistory.Add(searchEntry);
             }
-
             await _context.SaveChangesAsync();
 
             return Ok(); //201 response
+        }
+        [HttpGet("paginated")]
+        public async Task<IActionResult> GetPaginatedSuggestions(string query, int pageSize = 10, int page = 1)
+        {
+            if (string.IsNullOrWhiteSpace(query))
+                return BadRequest("Query cannot be empty.");
+
+            Console.WriteLine($"[LOG] Received query: {query}, pageSize: {pageSize}, page: {page}");
+
+            // Fetch all suggestions
+            var allSuggestions = _context.Suggestions
+                .FromSqlInterpolated($"EXEC GetSuggestions @Query = {query}")
+                .AsEnumerable()
+                .Where(s => !s.IsHistory)
+                .ToList();
+
+            Console.WriteLine($"[LOG] Total suggestions fetched from DB: {allSuggestions.Count}");
+
+            // Process and clean suggestions
+            var processedSuggestions = allSuggestions
+                .SelectMany(s => s.Text.Split(',').Select(w => new { Text = w.Trim() }))
+                .Where(word => word.Text.StartsWith(query, StringComparison.OrdinalIgnoreCase))
+                .GroupBy(word => word.Text.ToLower())
+                .Select(group => group.First())
+                .OrderBy(word => word.Text)
+                .ToList();
+
+            Console.WriteLine($"[LOG] Total processed suggestions: {processedSuggestions.Count}");
+
+            int totalResults = processedSuggestions.Count;
+            int totalPages = (int)Math.Ceiling((double)totalResults / pageSize);
+
+            // Apply correct page-based skipping
+            var paginatedResults = processedSuggestions
+                .Skip((page - 1) * pageSize) // Correctly move to the right set of results
+                .Take(pageSize)
+                .ToList();
+
+            Console.WriteLine($"[LOG] Sending page {page}, Results: {paginatedResults.Count}");
+
+            return Ok(new
+            {
+                results = paginatedResults,
+                totalResults = totalResults,
+                pageSize = pageSize,
+                currentPage = page,
+                totalPages = totalPages
+            });
         }
     }
 }
