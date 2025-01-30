@@ -1,0 +1,197 @@
+/* General Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Body Styling */
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #FFFFFF; /* White background */
+    color: #000000; /* Black text for better contrast */
+}
+
+/* Main Container */
+#main-container {
+    text-align: center;
+    width: 100%;
+}
+
+/* Foogle Logo */
+#logo {
+    position: relative;
+    display: inline-block;
+    font-size: 80px;
+    font-weight: bold;
+    margin-bottom: 20px; /* Added spacing below the logo */
+}
+
+#version {
+    position: absolute;
+    top: -20px;
+    right: -40px;
+    font-size: 30px;
+    font-weight: bold;
+    background: linear-gradient(90deg, #f44336, #ff9800, #4caf50, #2196f3, #9c27b0, #00bcd4);
+    background-size: 600% 600%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: smooth-gradient 6s ease infinite, subtle-scale 2s ease infinite;
+}
+/* Gradient Animation */
+@keyframes smooth-gradient {
+    0% { background-position: 0% 50%; }
+    16% { background-position: 20% 50%; }
+    33% { background-position: 40% 50%; }
+    50% { background-position: 60% 50%; }
+    66% { background-position: 80% 50%; }
+    83% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* Subtle Scaling Animation */
+@keyframes subtle-scale {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+/* Search Bar Container */
+#search-bar-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 600px;
+    max-width: 90%; /* Ensure it adjusts for smaller screens */
+    margin: 0 auto; /* Center align the container */
+    position: relative;
+    border-bottom: none; /* Remove the unwanted line */
+}
+
+/* Search Bar */
+#search-bar {
+    flex: 1;
+    width: 100%;
+    padding: 10px 40px 10px 40px; /* Add padding for icons */
+    font-size: 16px;
+    border: 1px solid #CCCCCC; /* Light gray border */
+    border-radius: 24px;
+    background-color: #F5F5F5; /* Light gray background */
+    color: #000000; /* Black text */
+    box-shadow: 0px 1px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    outline: none;
+    transition: all 0.3s ease-in-out;
+    text-align: left; /* Ensure text is left-aligned */
+}
+
+#search-bar:focus {
+    border-color: #4285F4; /* Blue border on focus */
+    box-shadow: 0px 1px 6px rgba(66, 133, 244, 0.5); /* Blue shadow on focus */
+}
+
+/* Search Icon */
+#search-icon {
+    position: absolute;
+    left: 13px; /* Position the icon to the left */
+    color: #4285F4; /* Blue color for the search icon */
+    font-size: 18px;
+    pointer-events: none; /* Make the icon unclickable */
+}
+
+/* Mic Icon */
+#mic-icon {
+    position: absolute;
+    right: 13px; /* Adjust for alignment inside the container */
+    top: 50%; /* Center vertically */
+    transform: translateY(-50%);
+    color: #4285F4; /* White color for the mic icon */
+    font-size: 18px;
+    cursor: pointer;
+    transition: color 0.3s ease-in-out, transform 0.2s ease-in-out;
+}
+
+#mic-icon:hover {
+    color: #4caf50; /* Blue color on hover */
+}
+
+/* Mic Animation when clicked */
+@keyframes mic-recording {
+    0%, 100% {
+        transform: translateY(-50%) scale(1);
+        color: red;
+    }
+    50% {
+        transform: translateY(-50%) scale(1.3);
+        color: darkred;
+    }
+}
+
+.mic-active {
+    animation: mic-recording 1s infinite;
+}
+
+@keyframes mic-pulse {
+    0%, 100% {
+        transform: translateY(-50%) scale(1);
+        color: #4285F4;
+    }
+    50% {
+        transform: translateY(-50%) scale(1.2);
+        color: #1a73e8; /* Darker blue */
+    }
+}
+
+/* Suggestions */
+#suggestions {
+    background-color: #FFFFFF; /* White background for suggestions */
+    color: #000000; /* Black text */
+    border-radius: 8px;
+    margin-top: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    overflow: hidden;
+    width: 600px;
+    max-width: 90%; /* Ensure it adjusts for smaller screens */
+    margin: 10px auto; /* Center the suggestion container */
+    text-align: left;
+}
+
+.suggestion-item {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #CCCCCC; /* Light gray border */
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.suggestion-item:last-child {
+    border-bottom: none;
+}
+
+.suggestion-item:hover {
+    background-color: #F5F5F5; /* Light gray background on hover */
+}
+
+.suggestion-icon {
+    margin-right: 5px;
+    color: #4285F4; /* Blue color for the suggestion icon */
+    font-size: 16px;  
+}
+
+.suggestion-text {
+    flex-grow: 1;
+    font-size: 16px;
+    text-align: left; /* Ensure text aligns to the left */
+}
+
+/* Centering search container */
+#search-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}

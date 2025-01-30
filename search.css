@@ -1,0 +1,230 @@
+/* General Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Body Styling */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #ffffff;
+    color: #333;
+    text-align: center;
+    line-height: 1.6;
+}
+
+/* Search Header */
+#search-header {
+    padding: 20px 0;
+    background: white;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+}
+
+.logo-container {
+    display: flex;
+    align-items: center;
+}
+
+/* Foogle Text Logo */
+.foogle-logo {
+    font-size: 40px;
+    font-weight: bold;
+    font-family: 'Product Sans', Arial, sans-serif;
+    display: flex;
+    align-items: center;
+}
+
+.foogle-logo span {
+    display: inline-block;
+}
+
+.foogle-logo .f {
+    color: #4285F4; /* Blue */
+}
+
+.foogle-logo .o1 {
+    color: #EA4335; /* Red */
+}
+
+.foogle-logo .o2 {
+    color: #FBBC05; /* Yellow */
+}
+
+.foogle-logo .g {
+    color: #4285F4; /* Blue */
+}
+
+.foogle-logo .l {
+    color: #34A853; /* Green */
+}
+
+.foogle-logo .e {
+    color: #EA4335; /* Red */
+}
+
+/* Search Form */
+#search-form {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    align-items: center;
+}
+
+#search-bar {
+    width: 600px;
+    padding: 15px;
+    font-size: 18px;
+    border: 2px solid #e0e0e0;
+    border-radius: 30px;
+    outline: none;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+#search-bar:focus {
+    border-color: #4285F4;
+    box-shadow: 0 0 8px rgba(66, 133, 244, 0.3);
+}
+
+#search-form button {
+    padding: 15px 30px;
+    font-size: 18px;
+    background-color: #34A853; /* Green color */
+    color: white;
+    border: none;
+    border-radius: 8px; /* Less rounded */
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+#search-form button:hover {
+    background-color: #2E8B57; /* Darker green */
+    transform: scale(1.05);
+}
+
+#search-form button:active {
+    transform: scale(0.95);
+}
+
+/* Suggestions */
+#suggestions {
+    max-width: 600px; /* Match the search bar width */
+    width: 100%; /* Ensure it doesn't exceed the search bar width */
+    margin: 5px auto 0; /* Center and reduce top margin */
+    background: #e9ecef; /* Darker gray background */
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    text-align: left;
+    display: none;
+    padding: 8px 0; /* Reduce padding for a more compact look */
+    position: absolute; /* Position it below the search bar */
+    left: 51%; /* Shift slightly to the right */
+    transform: translateX(-50%); /* Center horizontally */
+    z-index: 1000; /* Ensure it appears above other elements */
+    max-height: 200px; /* Limit height to prevent taking too much space */
+    overflow-y: auto; /* Add scroll if suggestions exceed container height */
+}
+
+.suggestion-item {
+    padding: 8px 20px; /* Reduce padding for a more compact look */
+    border-bottom: 1px solid #ddd; /* Slightly darker border */
+    transition: background-color 0.3s ease;
+    cursor: pointer;
+    font-size: 16px; /* Slightly smaller font size */
+    color: #333; /* Dark gray text */
+}
+
+.suggestion-item:hover {
+    background-color: #dee2e6; /* Slightly darker gray on hover */
+    text-decoration: none; /* Remove underline on hover */
+}
+
+.suggestion-item:last-child {
+    border-bottom: none;
+}
+/* Search Results */
+#search-results {
+    max-width: 800px;
+    margin: 30px auto;
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    text-align: left;
+}
+
+.search-result {
+    padding: 20px;
+    border-bottom: 1px solid #eee;
+    transition: background-color 0.3s ease;
+}
+
+.search-result:hover {
+    background-color: #f9f9f9;
+}
+
+.search-result:last-child {
+    border-bottom: none;
+}
+
+.search-result h2 {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 600;
+}
+
+.search-result a {
+    color: #1a0dab;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+
+
+/* Pagination */
+#pagination {
+    text-align: center;
+    margin-top: 30px;
+    padding: 20px 0;
+}
+
+#pagination button {
+    padding: 10px 16px;
+    font-size: 16px;
+    margin: 5px;
+    border: none;
+    background-color: #FBBC05; /* Yellow color */
+    color: black;
+    cursor: pointer;
+    border-radius: 8px; /* Less rounded */
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+#pagination button:hover:not(:disabled) {
+    background-color: #F4B400; /* Darker yellow */
+    transform: scale(1.05);
+}
+
+#pagination button:active {
+    transform: scale(0.95);
+}
+
+#pagination button:disabled {
+    background-color: #e0e0e0;
+    color: #a0a0a0;
+    cursor: not-allowed;
+}
+
+#pagination button.active {
+    background-color: #34A853; /* Green color */
+    color: white;
+    font-weight: bold;
+    box-shadow: 0 4px 8px rgba(52, 168, 83, 0.3);
+}

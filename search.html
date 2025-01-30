@@ -1,51 +1,37 @@
-<!-- search.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Search Result</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: #121212;
-            color: #FFFFFF;
-        }
-        #result {
-            font-size: 24px;
-            margin-bottom: 20px;
-        }
-        button {
-            padding: 10px 20px;
-            font-size: 16px;
-            color: #FFFFFF;
-            background-color: #007BFF;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #0056b3;
-        }
-    </style>
+    <title>Foogle Search Results</title>
+    <link rel="stylesheet" href="search.css">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 </head>
 <body>
-    <div id="result"></div>
-    <button onclick="goBack()">Back to Search</button>
+    <div id="search-header">
+        <div class="logo-container">
+            <!-- Foogle Text Logo -->
+            <div class="foogle-logo">
+                <span class="f">F</span>
+                <span class="o1">o</span>
+                <span class="o2">o</span>
+                <span class="g">g</span>
+                <span class="l">l</span>
+                <span class="e">e</span>
+            </div>
+        </div>
+        <form id="search-form" action="search.html">
+            <input type="text" id="search-bar" name="query" placeholder="Search Foogle..." autocomplete="off">
+            <button type="submit">Search</button>
+        </form>
+    </div>
 
-    <script>
-        const params = new URLSearchParams(window.location.search);
-        const query = params.get('query');
-        document.getElementById('result').textContent = `You searched for "${query}"`;
+    <div id="suggestions"></div>
 
-        function goBack() {
-            window.location.href = 'index.html'; 
-        }
-    </script>
+    <div id="search-results"></div>
+
+    <div id="pagination" class="pagination-container"></div>
+
+    <script src="script.js"></script>
 </body>
 </html>
