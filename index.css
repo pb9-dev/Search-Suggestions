@@ -39,7 +39,7 @@ body {
     font-weight: bold;
     background: linear-gradient(90deg, #f44336, #ff9800, #4caf50, #2196f3, #9c27b0, #00bcd4);
     background-size: 600% 600%;
-    -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent;
     animation: smooth-gradient 6s ease infinite, subtle-scale 2s ease infinite;
 }
@@ -194,4 +194,52 @@ body {
     flex-direction: column;
     align-items: center;
     width: 100%;
+}
+/* Responsive Design  */
+@media (max-width: 768px) {
+    #logo {
+        font-size: 50px;
+    }
+    #search-bar-container {
+        width: 90%;
+    }
+    #search-bar {
+        font-size: 14px;
+        padding: 10px 40px;
+    }
+    #search-icon, #mic-icon {
+        font-size: 16px;
+    }
+    #suggestions {
+        max-width: 90%;
+    }
+}
+
+@media (max-width: 480px) {
+    #logo {
+        font-size: 40px;
+    }
+    #search-bar-container {
+        width: 100%;
+    }
+    #search-bar {
+        font-size: 12px;
+        padding: 8px 35px;
+    }
+    #search-icon, #mic-icon {
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 320px) {
+    #logo {
+        font-size: 30px;
+    }
+    #search-bar {
+        font-size: 10px;
+        padding: 6px 30px;
+    }
+    #search-icon, #mic-icon {
+        font-size: 12px;
+    }
 }

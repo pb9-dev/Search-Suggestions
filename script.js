@@ -1,4 +1,4 @@
-let lastId = null;
+import axios from 'axios';
 const pageSize = 10;
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -8,26 +8,26 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (query && searchBar) {
         searchBar.value = query;
-        fetchResults(query, 1, true);
+        fetchResults(query, 1);
     }
 });
 
-const CACHE_TTL_MS = 1 * 60 * 1000; // 20 minutes in milliseconds
+const CACHE_TTL_MS = 1 * 60 * 1000; 
 
-async function fetchResults(query, page) {
+export async function fetchResults(query, page) {
     try {
         const cacheKey = `search:${query}:page:${page}`;
         const storedData = sessionStorage.getItem(cacheKey);
         const storedTotalResults = sessionStorage.getItem(`search:${query}:totalResults`);
 
         if (storedData && storedTotalResults) {
-            console.log("[CACHE HIT] Fetching from sessionStorage.");
+            console.log("Fetching from sessionStorage.");
             renderResults(JSON.parse(storedData));
             renderPagination(query, page, Math.ceil(storedTotalResults / pageSize));
             return;
         }
 
-        console.log("[CACHE MISS] Fetching from API...");
+        console.log("Fetching from API...");
         const response = await axios.get('http://localhost:5165/api/Search/paginated', {
             params: { query: query, pageSize: pageSize, page: page }
         });
@@ -53,13 +53,9 @@ function renderPagination(query, currentPage, totalPages) {
     paginationContainer.innerHTML = "";
     if (totalPages <= 1) return;
 
-    const maxPagesToShow = 5;
-    let startPage = Math.max(1, currentPage - Math.floor(maxPagesToShow / 2));
-    let endPage = Math.min(totalPages, startPage + maxPagesToShow - 1);
-
-    if (endPage - startPage < maxPagesToShow - 1) {
-        startPage = Math.max(1, endPage - maxPagesToShow + 1);
-    }
+    // Start from page 1 and show all pages up to totalPages
+    let startPage = 1;
+    let endPage = totalPages;
 
     if (currentPage > 1) {
         const prevButton = document.createElement("button");
@@ -68,6 +64,7 @@ function renderPagination(query, currentPage, totalPages) {
         paginationContainer.appendChild(prevButton);
     }
 
+    // Display page buttons for all pages from startPage to endPage
     for (let i = startPage; i <= endPage; i++) {
         const pageLink = document.createElement("button");
         pageLink.textContent = i;
@@ -83,6 +80,7 @@ function renderPagination(query, currentPage, totalPages) {
         paginationContainer.appendChild(nextButton);
     }
 }
+
 
 function renderResults(results) {
     const resultsContainer = document.getElementById("search-results");
@@ -132,11 +130,9 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 });
 
-async function getSuggestions(query) {
+export async function getSuggestions(query) {
     const suggestionsContainer = document.getElementById("suggestions");
-    if (!suggestionsContainer) return;
 
-    suggestionsContainer.innerHTML = "";
 
     try {
         const response = await axios.get("http://localhost:5165/api/Search", {
@@ -175,11 +171,13 @@ async function getSuggestions(query) {
             suggestionsContainer.style.display = "none";
         }
     } catch (error) {
-        console.error("Error fetching suggestions:", error);
+        throw error;
     }
 }
 
-async function logSearch(query) {
+
+
+export async function logSearch(query) {
     try {
         await axios.post("http://localhost:5165/api/Search/LogSearch", query, {
             headers: { "Content-Type": "application/json" }
@@ -189,7 +187,7 @@ async function logSearch(query) {
     }
 }
 
-document.addEventListener("DOMContentLoaded", () => {
+export function setupMicrophone() {
     const searchBar = document.getElementById("search-bar");
     const micIcon = document.getElementById("mic-icon");
 
@@ -228,4 +226,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     recognition.onerror = () => micIcon.classList.remove("mic-active");
     recognition.onend = () => micIcon.classList.remove("mic-active");
+
+    return recognition; 
+}
+document.addEventListener("DOMContentLoaded", () => {
+    setupMicrophone(); 
 });
