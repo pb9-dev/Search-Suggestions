@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using StackExchange.Redis;
 using SearchApi.Models;
 using Microsoft.Data.SqlClient;
-
 namespace SearchApi.Controllers
 {
     [ApiController]
@@ -25,11 +24,11 @@ namespace SearchApi.Controllers
             if (string.IsNullOrWhiteSpace(query))
                 return BadRequest("Query cannot be empty.");
 
-            //if (query.Trim().Length <= 2)
-            //{
-            //    return BadRequest("Suggestions are available only for queries with more than 2 letters.");
-            //}
-            // Checking Redis cache
+            if (query.Trim().Length <= 2)
+            {
+                return BadRequest("Suggestions are available only for queries with more than 2 letters.");
+            }
+            //Checking Redis cache
             var cacheKey = $"suggestions:{query.ToLower()}";
             var cachedSuggestions = await _redisCache.StringGetAsync(cacheKey);
             if (!cachedSuggestions.IsNullOrEmpty)
@@ -43,31 +42,10 @@ namespace SearchApi.Controllers
 
             // Executing the stored procedure and returning results
             var allSuggestions = await _context.Suggestions
-                .FromSqlInterpolated($"EXEC GetSuggestions @Query = {query}")
+                .FromSqlInterpolated($"EXEC GetSearchSuggestions @Query = {query}")
                 .ToListAsync();
 
-            // Process the results
-            var processedSuggestions = allSuggestions
-                .AsEnumerable()
-                .SelectMany(s => s.Text.Split(',').Select(w => new { Text = w.Trim(), IsHistory = s.IsHistory }))
-                .Where(word =>
-                {
-                    if (word.Text.Contains(" ")) // multi-word suggestion
-                    {
-                        // Check if any word in the multi-word suggestion matches the query completely
-                        var words = word.Text.Split(' ');
-                        return words.Any(w => w.StartsWith(query, StringComparison.OrdinalIgnoreCase));
-                    }
-
-                    // For single-word suggestions, check if it starts with the query
-                    return word.Text.StartsWith(query, StringComparison.OrdinalIgnoreCase);
-                })
-                .GroupBy(word => word.Text.ToLower())
-                .Select(group => group.First())
-                .OrderByDescending(word => word.IsHistory)
-                .Take(10);
-
-            var result = processedSuggestions.ToList();
+            var result = allSuggestions.Take(10).ToList();
 
             // Store the result in Redis cache
             await _redisCache.StringSetAsync(cacheKey, string.Join("|", result.Select(r => r.Text)), TimeSpan.FromMinutes(5));
@@ -102,44 +80,34 @@ namespace SearchApi.Controllers
 
             return Ok(); //201 response
         }
+
         [HttpGet("paginated")]
-        public async Task<IActionResult> GetPaginatedSuggestions(string query, int pageSize = 10, int page = 1)
+        public IActionResult GetPaginatedSuggestions(string query, int pageSize = 10, int page = 1)
         {
             if (string.IsNullOrWhiteSpace(query))
                 return BadRequest("Query cannot be empty.");
 
-            Console.WriteLine($"[LOG] Received query: {query}, pageSize: {pageSize}, page: {page}");
+            Console.WriteLine($"Received query: {query}, pageSize: {pageSize}, page: {page}");
 
             // Fetch all suggestions
             var allSuggestions = _context.Suggestions
-                .FromSqlInterpolated($"EXEC GetSuggestions @Query = {query}")
+                .FromSqlInterpolated($"EXEC GetSearchResults @Query = {query}")
                 .AsEnumerable()
                 .Where(s => !s.IsHistory)
                 .ToList();
 
-            Console.WriteLine($"[LOG] Total suggestions fetched from DB: {allSuggestions.Count}");
+            Console.WriteLine($"Total suggestions fetched from StoredProcedure: {allSuggestions.Count}");
 
-            // Process and clean suggestions
-            var processedSuggestions = allSuggestions
-                .SelectMany(s => s.Text.Split(',').Select(w => new { Text = w.Trim() }))
-                .Where(word => word.Text.StartsWith(query, StringComparison.OrdinalIgnoreCase))
-                .GroupBy(word => word.Text.ToLower())
-                .Select(group => group.First())
-                .OrderBy(word => word.Text)
-                .ToList();
-
-            Console.WriteLine($"[LOG] Total processed suggestions: {processedSuggestions.Count}");
-
-            int totalResults = processedSuggestions.Count;
+            int totalResults = allSuggestions.Count;
             int totalPages = (int)Math.Ceiling((double)totalResults / pageSize);
 
             // Apply correct page-based skipping
-            var paginatedResults = processedSuggestions
-                .Skip((page - 1) * pageSize) // Correctly move to the right set of results
+            var paginatedResults = allSuggestions
+                .Skip((page - 1) * pageSize) 
                 .Take(pageSize)
                 .ToList();
 
-            Console.WriteLine($"[LOG] Sending page {page}, Results: {paginatedResults.Count}");
+            Console.WriteLine($"Sending page {page}, Results: {paginatedResults.Count}");
 
             return Ok(new
             {
