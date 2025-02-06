@@ -1,5 +1,7 @@
 import axios from 'axios';
 const pageSize = 10;
+let debounceTimeout;
+const MAX_QUERY_LENGTH = 20;
 
 document.addEventListener("DOMContentLoaded", function () {
     const queryParams = new URLSearchParams(window.location.search);
@@ -46,25 +48,31 @@ export async function fetchResults(query, page) {
 }
 
 
-function renderPagination(query, currentPage, totalPages) {
+function renderPagination(query, currentPage, totalPages) {  
     const paginationContainer = document.getElementById("pagination");
     if (!paginationContainer) return;
-
+    // console.log("Pagination Container Inner HTML:", paginationContainer.innerHTML);
     paginationContainer.innerHTML = "";
+
     if (totalPages <= 1) return;
 
-    // Start from page 1 and show all pages up to totalPages
-    let startPage = 1;
-    let endPage = totalPages;
+    const maxPagesToShow = 5;
+    let startPage = Math.max(1, currentPage - Math.floor(maxPagesToShow / 2));
+    let endPage = Math.min(totalPages, startPage + maxPagesToShow - 1);
 
-    if (currentPage > 1) {
-        const prevButton = document.createElement("button");
-        prevButton.textContent = "Previous";
-        prevButton.onclick = () => fetchResults(query, currentPage - 1);
-        paginationContainer.appendChild(prevButton);
+    if (endPage - startPage < maxPagesToShow - 1) {
+        startPage = Math.max(1, endPage - maxPagesToShow + 1);
     }
+    const prevButton = document.createElement("button");
+    prevButton.textContent = "Previous";
+    // Disable it if on the first page
+    if (currentPage === 1) {
+        prevButton.disabled = true;
+    }
+    prevButton.onclick = () => fetchResults(query, currentPage - 1);
+    paginationContainer.appendChild(prevButton);
 
-    // Display page buttons for all pages from startPage to endPage
+    //generate button dynamically
     for (let i = startPage; i <= endPage; i++) {
         const pageLink = document.createElement("button");
         pageLink.textContent = i;
@@ -73,14 +81,15 @@ function renderPagination(query, currentPage, totalPages) {
         paginationContainer.appendChild(pageLink);
     }
 
-    if (currentPage < totalPages) {
-        const nextButton = document.createElement("button");
-        nextButton.textContent = "Next";
-        nextButton.onclick = () => fetchResults(query, currentPage + 1);
-        paginationContainer.appendChild(nextButton);
+    const nextButton = document.createElement("button");
+    nextButton.textContent = "Next";
+    // Disable it if on the last page
+    if (currentPage === totalPages) {
+        nextButton.disabled = true;
     }
+    nextButton.onclick = () => fetchResults(query, currentPage + 1);
+    paginationContainer.appendChild(nextButton); 
 }
-
 
 function renderResults(results) {
     const resultsContainer = document.getElementById("search-results");
@@ -95,13 +104,10 @@ function renderResults(results) {
     });
 }
 
-let debounceTimeout;
-const MAX_QUERY_LENGTH = 20;
-
 document.addEventListener("DOMContentLoaded", () => {
     const searchBar = document.getElementById("search-bar");
     const suggestionsContainer = document.getElementById("suggestions");
-
+    
     if (searchBar) {
         searchBar.addEventListener("input", function () {
             if (!suggestionsContainer) return;
@@ -109,13 +115,14 @@ document.addEventListener("DOMContentLoaded", () => {
             if (!query || query.length > MAX_QUERY_LENGTH) {
                 suggestionsContainer.innerHTML = "";
                 suggestionsContainer.style.display = "none";
+                console.error("Empty Query or Query length more than 20 is not allowed");
                 return;
             }
 
             clearTimeout(debounceTimeout);
             debounceTimeout = setTimeout(async function () {
                 await getSuggestions(query);
-            }, 170);
+            }, 300);
         });
 
         searchBar.addEventListener("keydown", async function (e) {
@@ -135,9 +142,11 @@ export async function getSuggestions(query) {
 
 
     try {
+        
         const response = await axios.get("http://localhost:5165/api/Search", {
             params: { query: query }
         });
+        suggestionsContainer.innerHTML = '';
         const suggestions = response.data;
 
         if (suggestions && suggestions.length > 0) {

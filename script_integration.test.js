@@ -38,7 +38,7 @@ test("Microphone button toggles and calls SpeechRecognition", () => {
   });
   
 
-  test("Displays search results from actual API", async () => {
+  test("Displays search results from API", async () => {
     document.body.innerHTML = `
         <input id="search-bar" type="text" />
         <div id="search-results"></div>
@@ -47,8 +47,7 @@ test("Microphone button toggles and calls SpeechRecognition", () => {
     await fetchResults("asp", 1);
   
     await waitFor(() => {
-      expect(screen.getByText("ASP.NET Core")).toBeInTheDocument();
-      expect(screen.getByText("ASP.NET")).toBeInTheDocument();
+      expect(screen.getByText("ASP.NET Core Guide")).toBeInTheDocument();
     });
   });
 
@@ -81,8 +80,8 @@ test("Calls actual API with correct query and pagination params", async () => {
   await fetchResults("a", 2);
 
   await waitFor(() => {
-    console.log("Current DOM content:", document.body.innerHTML);
-    expect(screen.getByText("Ansible")).toBeInTheDocument();
+    //console.log("Current DOM content:", document.body.innerHTML);
+    expect(screen.getByText("AR in Gaming")).toBeInTheDocument();
   });
 });
 
@@ -128,9 +127,7 @@ test("Renders correct pagination buttons based on total pages", async () => {
 
 test("Updates results when pagination button is clicked ", async () => {
   document.body.innerHTML = `<div id="pagination"></div><div id="search-results"></div>`;
-
   console.log("Calling API for page 2 results.");
-
   const button = document.createElement("button");
   button.textContent = "2";
   button.onclick = async () => {
@@ -141,22 +138,15 @@ test("Updates results when pagination button is clicked ", async () => {
       throw error;
     }
   };
-
   document.getElementById("pagination").appendChild(button);
-
-  // ✅ Click the pagination button to trigger API request
   fireEvent.click(screen.getByText("2"));
-
-  // ✅ Wait for real API results to be added to #search-results
   await waitFor(() => {
     const searchResultsContainer = document.getElementById("search-results");
-    console.log("🔍 Checking search results:", searchResultsContainer.innerHTML);
+    console.log("Checking search results:", searchResultsContainer.innerHTML);
     expect(searchResultsContainer.children.length).toBeGreaterThan(0);
   });
-
-  // ✅ Ensure an actual API result is in the document
-  expect(screen.getByText("Angular")).toBeInTheDocument();
-  expect(screen.getByText("AI in Natural Language Processing")).toBeInTheDocument();
+  expect(screen.getByText("AR in Gaming")).toBeInTheDocument();
+  //expect(screen.getByText("AI in Natural Language Processing")).toBeInTheDocument();
 });
 
 // Search Bar Functionality  

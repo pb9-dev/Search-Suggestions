@@ -53,10 +53,8 @@ test("Displays search results when a search is performed", async () => {
   const searchBar = screen.getByRole("textbox");
   fireEvent.input(searchBar, { target: { value: "test query" } });
 
-  // Call the function that fetches results
   await fetchResults("test query", 1);
 
-  // Check if results are rendered
   expect(screen.getByText("Result 1")).toBeInTheDocument();
   expect(screen.getByText("Result 2")).toBeInTheDocument();
 });
@@ -76,10 +74,8 @@ test("Stores search results in sessionStorage", async () => {
       }
   });
 
-  // Clear sessionStorage before test
   sessionStorage.clear();
 
-  // Call fetchResults to trigger the search
   await fetchResults("test query", 1);
 
   // Check if sessionStorage has the expected data
@@ -90,7 +86,6 @@ test("Stores search results in sessionStorage", async () => {
   expect(storedTotalResults).toBe("2");
 });
 
-//New test cases
 
 test("Calls API with correct query and pagination params", async () => {
   axios.get.mockResolvedValue({
@@ -110,7 +105,7 @@ test("Handles API failures gracefully", async () => {
   await expect(fetchResults("error query", 1)).resolves.not.toThrow();
 });
 
-// ✅ 2️⃣ Session Storage Handling  
+//Session Storage Handling  
 test("Retrieves search results from sessionStorage if available", async () => {
   const mockResults = [{ text: "Cached Result" }];
   sessionStorage.setItem("search:cached:page:1", JSON.stringify(mockResults));
@@ -123,7 +118,7 @@ test("Retrieves search results from sessionStorage if available", async () => {
   expect(screen.getByText("Cached Result")).toBeInTheDocument();
 });
 
-// ✅ 3️⃣ Pagination Behavior  
+// Pagination Behavior  
 test("Renders correct pagination buttons based on total pages", async () => {
   document.body.innerHTML = `<div id="pagination"></div>`;
 
@@ -164,7 +159,7 @@ test("Updates results when pagination button is clicked", async () => {
   expect(screen.getByText("Page 2 Result")).toBeInTheDocument();
 });
 
-// ✅ 4️⃣ Search Bar Functionality  
+// Search Bar Functionality  
 
 
 // Mock logSearch function
@@ -184,7 +179,6 @@ test("Triggers search when Enter key is pressed", async () => {
     value: { assign: jest.fn(), href: "" },
   });
 
-  // Manually attach the event listener since DOMContentLoaded has already fired
   searchBar.addEventListener("keydown", async (e) => {
     if (e.key === "Enter") {
       await window.logSearch(searchBar.value);
@@ -192,13 +186,10 @@ test("Triggers search when Enter key is pressed", async () => {
     }
   });
 
-  // Simulate Enter key press
   fireEvent.keyDown(searchBar, { key: "Enter", code: "Enter" });
 
-  // Wait for logSearch to be called
   await waitFor(() => expect(window.logSearch).toHaveBeenCalledWith("test query"));
 
-  // Ensure navigation happened
   expect(window.location.assign).toHaveBeenCalledWith("search.html?query=test%20query");
 });
 
@@ -211,13 +202,10 @@ test("Prevents searches with empty or too long queries", async () => {
   fireEvent.input(searchBar, { target: { value: "" } });
   fireEvent.keyDown(searchBar, { key: "Enter", code: "Enter" });
 
-  // Ensure the page does NOT navigate
   expect(window.location.href).not.toContain("search.html?query=");
 
-  // Simulate entering a query longer than MAX_QUERY_LENGTH (21 characters)
   fireEvent.input(searchBar, { target: { value: "a".repeat(21) } });
   fireEvent.keyDown(searchBar, { key: "Enter", code: "Enter" });
 
-  // Ensure the page does NOT navigate
   expect(window.location.href).not.toContain("search.html?query=");
 });
