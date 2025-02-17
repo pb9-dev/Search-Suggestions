@@ -36,7 +36,8 @@ jobs:
         run: npx jest --version
 
       - name: Run Tests
-        run: node --experimental-vm-modules node_modules/.bin/jest --verbose
+        run: npx jest --verbose --debug
+
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v2
