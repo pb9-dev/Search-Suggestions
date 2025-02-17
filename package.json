@@ -7,13 +7,13 @@
     "test": "jest"
   },
   "jest": {
-    "testEnvironment": "jsdom",
     "transform": {
       "^.+\\.js$": "babel-jest"
     },
-    "testMatch": [
-      "**/?(*.)+(spec|test).js"
-    ]
+    "transformIgnorePatterns": [
+      "/node_modules/(?!@testing-library/dom|axios).*/"
+    ],
+    "testEnvironment": "jsdom"
   },
   "repository": {
     "type": "git",
