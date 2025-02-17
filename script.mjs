@@ -1,6 +1,6 @@
 //checking pipeline 1
 import axios from 'axios';
-import { CONFIG } from './config.js';
+import { CONFIG } from './config.mjs';
 const pageSize = 10;
 let debounceTimeout;
 const MAX_QUERY_LENGTH = 20;

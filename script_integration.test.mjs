@@ -1,7 +1,7 @@
 import { fireEvent, screen, waitFor } from "@testing-library/dom";
 import "@testing-library/jest-dom";
 import axios from "axios";
-import { getSuggestions, fetchResults, logSearch, setupMicrophone } from "./script.js";
+import { getSuggestions, fetchResults, logSearch, setupMicrophone } from "./script.mjs";
 
 global.SpeechRecognition = jest.fn().mockImplementation(() => ({
   start: jest.fn(),

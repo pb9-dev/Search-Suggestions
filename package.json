@@ -2,18 +2,21 @@
   "name": "searchengine-frontend",
   "version": "1.0.0",
   "type": "module",
-  "main": "script.js",
+  "main": "script.mjs",
   "scripts": {
     "test": "jest"
   },
   "jest": {
     "transform": {
-      "^.+\\.js$": "babel-jest"
+      "^.+\\.(mjs|js)$": "babel-jest"
     },
     "transformIgnorePatterns": [
-      "/node_modules/(?!@testing-library/dom|axios|other-esm-module).*/"
+      "/node_modules/(?!@testing-library/dom|axios).*/"
     ],
-    "testEnvironment": "jsdom"
+    "testEnvironment": "jsdom",
+    "testMatch": [
+      "**/?(*.)+(spec|test).mjs" 
+    ]
   },
   "repository": {
     "type": "git",
