@@ -10,6 +10,7 @@
     "transform": {
       "^.+\\.(js|mjs)$": "babel-jest"
     },
+    "extensionsToTreatAsEsm": [".mjs"],
     "testEnvironment": "jsdom",
     "testMatch": [
       "**/?(*.)+(spec|test).mjs"
