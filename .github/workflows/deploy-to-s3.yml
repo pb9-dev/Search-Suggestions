@@ -8,7 +8,7 @@ on:
 jobs:
   build-and-deploy:
     name: Build, Test & Deploy Frontend
-    runs-on: ubuntu-latest  # Using Ubuntu for better Node.js compatibility
+    runs-on: ubuntu-latest  # Using Ubuntu for better Node.js compa
 
     steps:
       - name: Checkout Code
