@@ -26,7 +26,7 @@ jobs:
         run: npm list --depth=0  # Verifies that dependencies are correctly installed
 
       - name: Run Tests
-        run: npm test
+        run: node --experimental-vm-modules node_modules/.bin/jest --verbose
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v2
