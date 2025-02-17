@@ -24,6 +24,8 @@ jobs:
 
       - name: Print Installed Dependencies
         run: npm list --depth=0  # Verifies that dependencies are correctly installed
+      - name: Check Jest Version
+        run: npx jest --version
 
       - name: Run Tests
         run: node --experimental-vm-modules node_modules/.bin/jest --verbose
