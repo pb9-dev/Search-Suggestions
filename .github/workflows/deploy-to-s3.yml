@@ -11,6 +11,9 @@ jobs:
     runs-on: ubuntu-latest  # Using Ubuntu for better Node.js compatibility
 
     steps:
+      - name: Clean S3 Bucket
+        run: |
+          aws s3 rm s3://searchproject-frontend --recursive
       - name: Checkout Code
         uses: actions/checkout@v3
       - name: Clean Install Dependencies
@@ -44,7 +47,18 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ap-south-1  
+          aws-region: ap-south-1
 
       - name: Deploy to S3
-        run: aws s3 sync . s3://searchproject-frontend --exclude "node_modules/*" --exclude ".git/*" --exclude ".github/*" --exclude "*.test.js" --exclude "package.json" --exclude "package-lock.json"
+        run: |
+          aws s3 sync . s3://searchproject-frontend \
+          --exclude "node_modules/*" \
+          --exclude ".git/*" \
+          --exclude ".github/*" \
+          --exclude "*.test.mjs" \
+          --exclude "package.json" \
+          --exclude "package-lock.json" \
+          --exclude "babel.config.mjs" \
+          --exclude "jest.config.mjs" \
+          --exclude "README.md" \
+          --exclude ".*"  # Exclude dotfiles (if necessary)
