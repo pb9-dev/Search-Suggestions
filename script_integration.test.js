@@ -81,7 +81,7 @@ test("Calls actual API with correct query and pagination params", async () => {
 
   await waitFor(() => {
     //console.log("Current DOM content:", document.body.innerHTML);
-    expect(screen.getByText("AR in Gaming")).toBeInTheDocument();
+    expect(screen.getByText("Analytics")).toBeInTheDocument();
   });
 });
 
@@ -145,7 +145,7 @@ test("Updates results when pagination button is clicked ", async () => {
     console.log("Checking search results:", searchResultsContainer.innerHTML);
     expect(searchResultsContainer.children.length).toBeGreaterThan(0);
   });
-  expect(screen.getByText("AR in Gaming")).toBeInTheDocument();
+  expect(screen.getByText("Analytics")).toBeInTheDocument();
   //expect(screen.getByText("AI in Natural Language Processing")).toBeInTheDocument();
 });
 

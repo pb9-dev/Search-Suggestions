@@ -1,4 +1,6 @@
+//checking pipeline 1
 import axios from 'axios';
+import { CONFIG } from './config.js';
 const pageSize = 10;
 let debounceTimeout;
 const MAX_QUERY_LENGTH = 20;
@@ -30,7 +32,7 @@ export async function fetchResults(query, page) {
         }
 
         console.log("Fetching from API...");
-        const response = await axios.get('http://localhost:5165/api/Search/paginated', {
+        const response = await axios.get(`${CONFIG.BASE_URL}/paginated`, {
             params: { query: query, pageSize: pageSize, page: page }
         });
 
@@ -143,7 +145,7 @@ export async function getSuggestions(query) {
 
     try {
         
-        const response = await axios.get("http://localhost:5165/api/Search", {
+        const response = await axios.get(`${CONFIG.BASE_URL}`, {
             params: { query: query }
         });
         suggestionsContainer.innerHTML = '';
@@ -188,7 +190,7 @@ export async function getSuggestions(query) {
 
 export async function logSearch(query) {
     try {
-        await axios.post("http://localhost:5165/api/Search/LogSearch", query, {
+        await axios.post(`${CONFIG.BASE_URL}/LogSearch`, query, {
             headers: { "Content-Type": "application/json" }
         });
     } catch (error) {
