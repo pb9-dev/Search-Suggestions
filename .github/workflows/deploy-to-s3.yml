@@ -11,9 +11,6 @@ jobs:
     runs-on: ubuntu-latest  # Using Ubuntu for better Node.js compatibility
 
     steps:
-      - name: Clean S3 Bucket
-        run: |
-          aws s3 rm s3://searchproject-frontend --recursive
       - name: Checkout Code
         uses: actions/checkout@v3
       - name: Clean Install Dependencies
