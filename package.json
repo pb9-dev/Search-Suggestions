@@ -19,7 +19,7 @@
       [
         "jest-html-reporter",
         {
-          "outputPath": "test-report.html"
+          "outputPath": "./results/test-report.html"
         }
       ],
       ["jest-allure", { "resultsDir": "allure-results" }]
