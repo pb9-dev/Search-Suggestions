@@ -37,11 +37,14 @@ jobs:
 
       - name: Run Jest Tests
         run: npm test
-      - name: List directory contents
+      - name: Check if 'results' folder exists
         run: |
-          echo "Listing files and folders:"
-          ls -R  # This lists all files and directories recursively in the current working directory
-
+          if [ -d "results" ]; then
+            echo "'results' folder exists."
+            ls -R results  # List contents inside 'results' directory
+          else
+            echo "'results' folder does not exist."
+          fi
       - name: Upload JUnit Report
         uses: actions/upload-artifact@v4
         with:
