@@ -17,12 +17,18 @@
     "reporters": [
       "default",
       [
+        "jest-junit",
+        {
+          "outputDirectory": "./results",
+          "outputName": "junit.xml"
+        }
+      ],
+      [
         "jest-html-reporter",
         {
           "outputPath": "./results/test-report.html"
         }
-      ],
-      ["jest-allure", { "resultsDir": "allure-results" }]
+      ]
     ],
     "collectCoverage": true,
     "coverageDirectory": "coverage",
@@ -53,7 +59,7 @@
     "axios": "^1.7.9",
     "babel-jest": "^29.7.0",
     "jest": "^29.7.0",
-    "jest-allure": "^0.1.3",
+    "jest-allure2": "^1.2.3",
     "jest-environment-jsdom": "^29.7.0",
     "jest-html-reporter": "^4.0.1",
     "jest-junit": "^16.0.0"
