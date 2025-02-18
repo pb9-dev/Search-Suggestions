@@ -16,7 +16,7 @@
     ],
     "reporters": [
       "default",
-      ["jest-junit", { "outputDirectory": "test-results", "outputName": "jest-report.xml" }]
+      ["jest-junit", { "outputDirectory": "./test-results", "outputName": "jest-report.xml" }]
     ],
     "collectCoverage": true,
     "coverageDirectory": "coverage",
