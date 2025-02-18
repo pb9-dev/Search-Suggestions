@@ -37,8 +37,11 @@ jobs:
 
       - name: Run Jest Tests
         run: npm test
-      - name: List all files and folders (debug)
-        run: tree -a 
+      - name: List directory contents
+        run: |
+          echo "Listing files and folders:"
+          ls -R  # This lists all files and directories recursively in the current working directory
+
       - name: Upload JUnit Report
         uses: actions/upload-artifact@v4
         with:
