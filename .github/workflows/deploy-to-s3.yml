@@ -38,13 +38,13 @@ jobs:
       - name: Run Tests with Jest Report
         run: npx jest --verbose --ci --reporters=default --reporters=jest-junit
       - name: Upload Jest Test Report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: jest-test-report
           path: test-results/jest-report.xml
 
       - name: Upload Jest Coverage Report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: jest-coverage-report
           path: coverage/
