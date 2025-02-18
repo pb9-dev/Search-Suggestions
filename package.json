@@ -13,7 +13,14 @@
     "testEnvironment": "jsdom",
     "testMatch": [
       "**/?(*.)+(spec|test).mjs"
-    ]
+    ],
+    "reporters": [
+      "default",
+      ["jest-junit", { "outputDirectory": "test-results", "outputName": "jest-report.xml" }]
+    ],
+    "collectCoverage": true,
+    "coverageDirectory": "coverage",
+    "coverageReporters": ["json", "lcov", "text", "clover"]
   },
   "repository": {
     "type": "git",
