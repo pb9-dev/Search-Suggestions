@@ -35,21 +35,39 @@ jobs:
       - name: Check Jest Version
         run: npx jest --version
 
-      - name: Run Tests with Jest Report
-        run: |
-          npx jest --verbose --ci --reporters=default --reporters=jest-junit
+      - name: Run Jest Tests
+        run: npm test -- --ci --reporters=default --reporters=jest-junit
+        env:
+          JEST_JUNIT_OUTPUT_DIR: reports
 
-      - name: Upload Jest Test Report
+      - name: Upload JUnit Report
         uses: actions/upload-artifact@v4
         with:
-          name: jest-test-report
-          path: ./junit.xml
+          name: junit-report
+          path: reports/junit.xml
+
+      - name: Upload HTML Report (if using Jest HTML Reporter)
+        uses: actions/upload-artifact@v4
+        with:
+          name: html-test-report
+          path: reports/test-report.html
+
 
       - name: Upload Jest Coverage Report
         uses: actions/upload-artifact@v4
         with:
           name: jest-coverage-report
           path: coverage/
+      - name: Generate Allure Report
+        run: |
+          npm install -g allure-commandline
+          allure generate allure-results --clean -o allure-report
+          
+      - name: Upload Allure Report
+        uses: actions/upload-artifact@v3
+        with:
+          name: allure-report
+          path: allure-report
 
 
 
