@@ -37,8 +37,6 @@ jobs:
 
       - name: Run Jest Tests
         run: npm test -- --ci --reporters=default --reporters=jest-junit --reporters=jest-html-reporter
-        env:
-          JEST_JUNIT_OUTPUT_DIR: reports
       - name: List all files and folders (debug)
         run: tree -a 
       - name: Upload JUnit Report
