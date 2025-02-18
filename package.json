@@ -15,14 +15,7 @@
       "**/?(*.)+(spec|test).mjs"
     ],
     "reporters": [
-      "default",
-      [
-        "jest-junit",
-        {
-          "outputDirectory": "./test-results",
-          "outputName": "jest-report.xml"
-        }
-      ]
+      "default"
     ],
     "collectCoverage": true,
     "coverageDirectory": "coverage",

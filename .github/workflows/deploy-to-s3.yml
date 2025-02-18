@@ -34,22 +34,16 @@ jobs:
         run: npm list --depth=0  # Verifies that dependencies are correctly installed
       - name: Check Jest Version
         run: npx jest --version
-      - name: Create test-results Directory
-        run: mkdir -p $GITHUB_WORKSPACE/test-results
 
       - name: Run Tests with Jest Report
         run: |
-          npx jest --verbose --ci --reporters=default --reporters=jest-junit --outputDirectory=$GITHUB_WORKSPACE/test-results --outputName=jest-report.xml
-      - name: List Files After Jest Test
-        run: |
-          echo "Listing files in the current directory:"
-          ls -R
+          npx jest --verbose --ci --reporters=default --reporters=jest-junit
 
       - name: Upload Jest Test Report
         uses: actions/upload-artifact@v4
         with:
           name: jest-test-report
-          path: test-results/jest-report.xml
+          path: ./junit.xml
 
       - name: Upload Jest Coverage Report
         uses: actions/upload-artifact@v4
