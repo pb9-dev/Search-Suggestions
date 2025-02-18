@@ -46,6 +46,7 @@ export async function fetchResults(query, page) {
         renderPagination(query, page, totalPages);
     } catch (error) {
         console.error('Error fetching search results:', error);
+        return null;
     }
 }
 

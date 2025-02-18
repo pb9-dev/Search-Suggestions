@@ -96,7 +96,18 @@ test("Calls API with correct query and pagination params", async () => {
 test("Handles API failures gracefully", async () => {
   axios.get.mockRejectedValue(new Error("Network Error"));
 
-  await expect(fetchResults("error query", 1)).resolves.not.toThrow();
+  const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+
+  const result = await fetchResults("error query", 1);
+
+  // Verify the result is a fallback value
+  expect(result).toBeNull();
+
+  // Check if the error message was logged for debugging purposes
+  expect(consoleSpy).toHaveBeenCalledWith('Error fetching search results:', expect.any(Error));
+
+  // Cleanup spy after test
+  consoleSpy.mockRestore();
 });
 
 test("Retrieves search results from sessionStorage if available", async () => {
