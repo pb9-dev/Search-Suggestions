@@ -8,7 +8,7 @@ on:
 jobs:
   build-and-deploy:
     name: Build, Test & Deploy Frontend
-    runs-on: ubuntu-latest  # Using Ubuntu for better Node.js compa
+    runs-on: ubuntu-latest  
 
     steps:
       - name: Checkout Code
@@ -35,8 +35,20 @@ jobs:
       - name: Check Jest Version
         run: npx jest --version
 
-      - name: Run Tests
-        run: npx jest --verbose --debug
+      - name: Run Tests with Jest Report
+        run: npx jest --verbose --ci --reporters=default --reporters=jest-junit
+      - name: Upload Jest Test Report
+        uses: actions/upload-artifact@v3
+        with:
+          name: jest-test-report
+          path: test-results/jest-report.xml
+
+      - name: Upload Jest Coverage Report
+        uses: actions/upload-artifact@v3
+        with:
+          name: jest-coverage-report
+          path: coverage/
+
 
 
       - name: Configure AWS Credentials
