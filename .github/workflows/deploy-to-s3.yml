@@ -78,6 +78,8 @@ jobs:
         run: |
           aws s3 sync . s3://searchproject-frontend \
           --exclude "node_modules/*" \
+          --exclude "coverage/*" \
+          --exclude "results/*" \
           --exclude ".git/*" \
           --exclude ".github/*" \
           --exclude "*.test.mjs" \

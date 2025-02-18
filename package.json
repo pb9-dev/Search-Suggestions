@@ -14,6 +14,10 @@
     "testMatch": [
       "**/?(*.)+(spec|test).mjs"
     ],
+    "testPathIgnorePatterns": [
+    "/node_modules/",
+    "./script_integration.test.mjs" 
+  ],
     "reporters": [
       "default",
       [
