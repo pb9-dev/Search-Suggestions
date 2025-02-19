@@ -31,7 +31,7 @@ jobs:
       
 
       - name: Print Installed Dependencies
-        run: npm list --depth=0  # Verifies that dependencies are correctly installed
+        run: npm list --depth=0  
       - name: Check Jest Version
         run: npx jest --version
 
