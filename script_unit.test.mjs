@@ -3,7 +3,7 @@ import "@testing-library/jest-dom";
 import { jest } from "@jest/globals";
 import axios from "axios";
 import { getSuggestions, fetchResults, logSearch } from "./script.mjs";
-
+import { CONFIG } from "./config.mjs"; 
 // Mock axios
 jest.mock("axios", () => ({
   get: jest.fn(),
@@ -13,6 +13,7 @@ beforeEach(() => {
   document.body.innerHTML = "";
   sessionStorage.clear();
   jest.clearAllMocks();
+  jest.useFakeTimers();
 
   // Directly mock logSearch on window
   window.logSearch = jest.fn().mockResolvedValue();
@@ -199,4 +200,72 @@ test("Prevents searches with empty or too long queries", async () => {
   fireEvent.keyDown(searchBar, { key: "Enter", code: "Enter" });
 
   expect(window.location.href).not.toContain("search.html?query=");
+});
+
+// New test cases
+
+test("Handles empty search results gracefully", async () => {
+  axios.get.mockResolvedValue({ data: { results: [], totalResults: 0 } });
+  document.body.innerHTML = '<div id="search-results"></div>';
+
+  await fetchResults("noresults", 1);
+
+  expect(screen.queryByText("Result 1")).not.toBeInTheDocument();
+  expect(screen.queryByText("Result 2")).not.toBeInTheDocument();
+});
+
+test("Handles API failure when fetching search results", async () => {
+  axios.get.mockRejectedValue(new Error("Network error"));
+  const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+  
+  await fetchResults("error", 1);
+
+  expect(consoleSpy).toHaveBeenCalledWith("Error fetching search results:", expect.any(Error));
+  consoleSpy.mockRestore();
+});
+
+test("Handles API failure when fetching suggestions", async () => {
+  axios.get.mockRejectedValue(new Error("Suggestion error"));
+  await expect(getSuggestions("test")).rejects.toThrow("Suggestion error");
+});
+
+jest.useFakeTimers();
+
+test("Debounces getSuggestions API call correctly", async () => {
+  document.body.innerHTML = `
+    <input id="search-bar" />
+    <div id="suggestions"></div> <!-- Ensure this element exists -->
+  `;
+
+  const searchBar = screen.getByRole("textbox");
+
+  axios.get.mockResolvedValueOnce({ data: ["test1", "test2"] });
+
+  fireEvent.input(searchBar, { target: { value: "h" } });
+  fireEvent.input(searchBar, { target: { value: "he" } });
+  fireEvent.input(searchBar, { target: { value: "hel" } });
+
+  jest.advanceTimersByTime(300);
+
+  // Call getSuggestions now that #suggestions exists
+  await getSuggestions("hel");
+
+  await waitFor(() => expect(axios.get).toHaveBeenCalledTimes(1));
+
+  expect(axios.get).toHaveBeenCalledWith(`${CONFIG.BASE_URL}`, {
+    params: { query: "hel" },
+  });
+});
+
+jest.useRealTimers();
+
+
+test("Disables previous button on first page", () => {
+  document.body.innerHTML = '<button id="prev-button" disabled></button>';
+  expect(screen.getByRole("button")).toBeDisabled();
+});
+
+test("Disables next button on last page", () => {
+  document.body.innerHTML = '<button id="next-button" disabled></button>';
+  expect(screen.getByRole("button")).toBeDisabled();
 });
