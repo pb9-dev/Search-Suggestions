@@ -1,39 +1,45 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuites name="jest tests" tests="17" failures="0" errors="0" time="2.414">
-  <testsuite name="undefined" errors="0" failures="0" skipped="0" timestamp="2025-02-19T06:40:08" time="1.622" tests="17">
-    <testcase classname=" Microphone button click toggles mic-active class" name=" Microphone button click toggles mic-active class" time="0.011">
+<testsuites name="jest tests" tests="20" failures="0" errors="0" time="2.524">
+  <testsuite name="undefined" errors="0" failures="0" skipped="0" timestamp="2025-02-19T09:42:39" time="1.709" tests="20">
+    <testcase classname=" Fetch suggestions and display them" name=" Fetch suggestions and display them" time="0.025">
     </testcase>
-    <testcase classname=" Fetch suggestions and display them" name=" Fetch suggestions and display them" time="0.022">
-    </testcase>
-    <testcase classname=" Displays search results when a search is performed" name=" Displays search results when a search is performed" time="0.086">
+    <testcase classname=" Displays search results when a search is performed" name=" Displays search results when a search is performed" time="0.084">
     </testcase>
     <testcase classname=" Stores search results in sessionStorage" name=" Stores search results in sessionStorage" time="0.01">
     </testcase>
-    <testcase classname=" Calls API with correct query and pagination params" name=" Calls API with correct query and pagination params" time="0.006">
+    <testcase classname=" Calls API with correct query and pagination params" name=" Calls API with correct query and pagination params" time="0.005">
     </testcase>
-    <testcase classname=" Handles API failures gracefully" name=" Handles API failures gracefully" time="0.006">
+    <testcase classname=" Handles API failures gracefully" name=" Handles API failures gracefully" time="0.01">
     </testcase>
     <testcase classname=" Retrieves search results from sessionStorage if available" name=" Retrieves search results from sessionStorage if available" time="0.006">
     </testcase>
-    <testcase classname=" Renders correct pagination buttons based on total pages" name=" Renders correct pagination buttons based on total pages" time="0.004">
+    <testcase classname=" Renders correct pagination buttons based on total pages" name=" Renders correct pagination buttons based on total pages" time="0.003">
     </testcase>
-    <testcase classname=" Updates results when pagination button is clicked" name=" Updates results when pagination button is clicked" time="0.014">
+    <testcase classname=" Updates results when pagination button is clicked" name=" Updates results when pagination button is clicked" time="0.017">
     </testcase>
-    <testcase classname=" Triggers search when Enter key is pressed" name=" Triggers search when Enter key is pressed" time="0.007">
+    <testcase classname=" Triggers search when Enter key is pressed" name=" Triggers search when Enter key is pressed" time="0.008">
     </testcase>
-    <testcase classname=" Prevents searches with empty or too long queries" name=" Prevents searches with empty or too long queries" time="0.004">
+    <testcase classname=" Prevents searches with empty or too long queries" name=" Prevents searches with empty or too long queries" time="0.005">
     </testcase>
-    <testcase classname=" Handles empty search results gracefully" name=" Handles empty search results gracefully" time="0.005">
+    <testcase classname=" Handles empty search results gracefully" name=" Handles empty search results gracefully" time="0.006">
     </testcase>
-    <testcase classname=" Handles API failure when fetching search results" name=" Handles API failure when fetching search results" time="0.004">
+    <testcase classname=" Handles API failure when fetching search results" name=" Handles API failure when fetching search results" time="0.005">
     </testcase>
-    <testcase classname=" Handles API failure when fetching suggestions" name=" Handles API failure when fetching suggestions" time="0.029">
+    <testcase classname=" Handles API failure when fetching suggestions" name=" Handles API failure when fetching suggestions" time="0.025">
     </testcase>
-    <testcase classname=" Debounces getSuggestions API call correctly" name=" Debounces getSuggestions API call correctly" time="0.007">
+    <testcase classname=" Debounces getSuggestions API call correctly" name=" Debounces getSuggestions API call correctly" time="0.013">
     </testcase>
-    <testcase classname=" Disables previous button on first page" name=" Disables previous button on first page" time="0.01">
+    <testcase classname=" Disables previous button on first page" name=" Disables previous button on first page" time="0.027">
     </testcase>
     <testcase classname=" Disables next button on last page" name=" Disables next button on last page" time="0.005">
+    </testcase>
+    <testcase classname=" Loads query from URL on page load" name=" Loads query from URL on page load" time="0.03">
+    </testcase>
+    <testcase classname=" Fetches search results from API" name=" Fetches search results from API" time="0.006">
+    </testcase>
+    <testcase classname=" Toggles microphone on click" name=" Toggles microphone on click" time="0.005">
+    </testcase>
+    <testcase classname=" Handles API failure when logging search" name=" Handles API failure when logging search" time="0.001">
     </testcase>
   </testsuite>
 </testsuites>

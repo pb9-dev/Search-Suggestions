@@ -4,9 +4,11 @@ import { jest } from "@jest/globals";
 import axios from "axios";
 import { getSuggestions, fetchResults, logSearch } from "./script.mjs";
 import { CONFIG } from "./config.mjs"; 
+import { setupMicrophone } from "./script.mjs";
 // Mock axios
 jest.mock("axios", () => ({
   get: jest.fn(),
+  post: jest.fn(),
 }));
 
 beforeEach(() => {
@@ -23,20 +25,6 @@ beforeEach(() => {
     writable: true,
     value: { assign: jest.fn(), href: "" },
   });
-});
-
-test("Microphone button click toggles mic-active class", () => {
-  document.body.innerHTML = '<i id="mic-icon" class="fa fa-microphone"></i>';
-  const micIcon = document.getElementById("mic-icon");
-  micIcon.addEventListener("click", () => {
-    micIcon.classList.toggle("mic-active");
-  });
-
-  fireEvent.click(micIcon);
-  expect(micIcon).toHaveClass("mic-active");
-
-  fireEvent.click(micIcon);
-  expect(micIcon).not.toHaveClass("mic-active");
 });
 
 test("Fetch suggestions and display them", async () => {
@@ -268,4 +256,66 @@ test("Disables previous button on first page", () => {
 test("Disables next button on last page", () => {
   document.body.innerHTML = '<button id="next-button" disabled></button>';
   expect(screen.getByRole("button")).toBeDisabled();
+});
+
+test("Loads query from URL on page load", async () => {
+  delete window.location;
+  window.location = { search: "?query=test" };
+
+  document.body.innerHTML = '<input id="search-bar" />';
+
+  // Use dynamic import to reload the module
+  await import("./script.mjs");
+
+  document.dispatchEvent(new Event("DOMContentLoaded"));
+
+  expect(screen.getByRole("textbox")).toHaveValue("test");
+});
+
+test("Fetches search results from API", async () => {
+  document.body.innerHTML = `
+    <input id="search-bar" type="text" />
+    <div id="search-results"></div>
+  `;
+
+  axios.get.mockResolvedValueOnce({ data: { results: [{ text: "Result" }], totalResults: 1 } });
+
+  await fetchResults("test", 1);
+
+  expect(screen.getByText("Result")).toBeInTheDocument();
+  expect(axios.get).toHaveBeenCalledWith(expect.stringContaining(CONFIG.BASE_URL), expect.any(Object));
+});
+
+beforeEach(() => {
+  window.SpeechRecognition = jest.fn().mockImplementation(() => ({
+    start: jest.fn(),
+    stop: jest.fn(),
+    onresult: jest.fn(),
+    onerror: jest.fn(),
+    onend: jest.fn(),
+  }));
+});
+
+test("Toggles microphone on click", async () => {
+  document.body.innerHTML = '<i id="mic-icon" class="fa fa-microphone"></i>';
+  const micIcon = document.getElementById("mic-icon");
+
+  setupMicrophone(); // Ensure event listener is attached
+
+  fireEvent.click(micIcon);
+  expect(micIcon).toHaveClass("mic-active");
+
+  fireEvent.click(micIcon);
+  expect(micIcon).not.toHaveClass("mic-active");
+});
+
+test("Handles API failure when logging search", async () => {
+  axios.post.mockRejectedValue(new Error("Network error"));
+  const consoleSpy = jest.spyOn(console, "error").mockImplementation(() => {});
+
+  await logSearch("test");
+
+  expect(consoleSpy).toHaveBeenCalledWith("Error logging search:", expect.any(Error));
+
+  consoleSpy.mockRestore();
 });
