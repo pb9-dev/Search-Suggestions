@@ -51,7 +51,7 @@ export async function fetchResults(query, page) {
 }
 
 
-function renderPagination(query, currentPage, totalPages) {  
+export function renderPagination(query, currentPage, totalPages) {  
     const paginationContainer = document.getElementById("pagination");
     if (!paginationContainer) return;
     // console.log("Pagination Container Inner HTML:", paginationContainer.innerHTML);
@@ -90,6 +90,7 @@ function renderPagination(query, currentPage, totalPages) {
     if (currentPage === totalPages) {
         nextButton.disabled = true;
     }
+    console.log(`fetchResults called for page ${currentPage + 1}`);
     nextButton.onclick = () => fetchResults(query, currentPage + 1);
     paginationContainer.appendChild(nextButton); 
 }

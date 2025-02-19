@@ -2,12 +2,16 @@ import { fireEvent, screen, waitFor } from "@testing-library/dom";
 import "@testing-library/jest-dom";
 import { jest } from "@jest/globals";
 import axios from "axios";
-import { getSuggestions, fetchResults, logSearch } from "./script.mjs";
+import { getSuggestions, fetchResults, logSearch, renderPagination } from "./script.mjs";
 import { CONFIG } from "./config.mjs"; 
 import { setupMicrophone } from "./script.mjs";
+
+import * as scriptModule from "./script.mjs";
 // Mock axios
 jest.mock("axios", () => ({
-  get: jest.fn(),
+  get: jest.fn().mockResolvedValue({
+    data: { results: [{ text: "Result 1" }], totalResults: 20 }, 
+  }),
   post: jest.fn(),
 }));
 
@@ -318,4 +322,40 @@ test("Handles API failure when logging search", async () => {
   expect(consoleSpy).toHaveBeenCalledWith("Error logging search:", expect.any(Error));
 
   consoleSpy.mockRestore();
+});
+test("Generates correct pagination buttons", () => {
+  document.body.innerHTML = `<div id="pagination"></div>`;
+  const paginationContainer = document.getElementById("pagination");
+
+  const query = "test";
+  const currentPage = 2;
+  const totalPages = 5;
+
+  renderPagination(query, currentPage, totalPages);
+
+  expect(paginationContainer.children.length).toBe(7); // Previous + 5 pages + Next
+  expect(screen.getByText("1")).toBeInTheDocument();
+  expect(screen.getByText("2")).toHaveClass("active");
+  expect(screen.getByText("5")).toBeInTheDocument();
+});
+
+test("Calls fetchResults with correct page number when clicking a page button", async () => {
+  document.body.innerHTML = `<div id="pagination"></div>`;
+
+  // ✅ Spy on `fetchResults` inside the module where it exists
+  const fetchResultsMock = jest.spyOn({ fetchResults }, "fetchResults").mockImplementation(() => {});
+
+  renderPagination("test", 1, 3); // Render pagination
+
+  const pageButton = screen.getByText("2");
+  expect(pageButton).toBeInTheDocument();
+
+  fireEvent.click(pageButton); // Click page 2
+
+  await waitFor(() => {
+    console.log("fetchResultsMock Calls:", fetchResultsMock.mock.calls);
+    expect(fetchResultsMock).toHaveBeenCalledWith("test", 2);
+  });
+
+  fetchResultsMock.mockRestore(); // ✅ Clean up
 });
