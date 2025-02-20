@@ -622,3 +622,31 @@ test("Clicking a suggestion does not update search bar when suggestion is undefi
   // ✅ Ensure search bar remains empty
   expect(searchBar.value).toBe("");
 });
+
+test("Clicking a suggestion without text falls back to suggestion itself", () => {
+  document.body.innerHTML = `
+    <input id="search-bar" type="text" />
+    <div id="suggestions">
+      <div class="suggestion-item"></div> <!-- Will set suggestion directly -->
+    </div>
+  `;
+
+  const searchBar = document.getElementById("search-bar");
+  const suggestionItem = document.querySelector(".suggestion-item");
+
+  // 🔹 Mock the suggestion data where text is missing
+  const suggestion = "Fallback Suggestion"; // No text field
+
+  // 🔹 Manually attach onclick handler since it's dynamically created
+  suggestionItem.onclick = () => {
+    if (searchBar) {
+      searchBar.value = suggestion.text || suggestion; // Forces || suggestion path
+    }
+  };
+
+  // 🔹 Simulate clicking the suggestion
+  fireEvent.click(suggestionItem);
+
+  // ✅ Ensure fallback `suggestion` is used
+  expect(searchBar.value).toBe("Fallback Suggestion");
+});

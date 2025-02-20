@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1740046277561" clover="3.2.0">
-  <project timestamp="1740046277561" name="All files">
+<coverage generated="1740046482666" clover="3.2.0">
+  <project timestamp="1740046482666" name="All files">
     <metrics statements="147" coveredstatements="140" conditionals="58" coveredconditionals="49" methods="23" coveredmethods="20" elements="228" coveredelements="209" complexity="0" loc="147" ncloc="147" packages="1" files="2" classes="2"/>
     <file name="config.mjs" path="C:\SearchApi\SearchEngine-frontend\config.mjs">
       <metrics statements="1" coveredstatements="1" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
