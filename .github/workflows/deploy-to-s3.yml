@@ -36,7 +36,7 @@ jobs:
   deploy:
     name: Deploy to AWS S3
     runs-on: ubuntu-latest
-    needs: build-and-test  # Ensures tests pass before deployment
+    needs: build-and-test 
     environment: 
       name: production  # Requires manual approval
     steps:
