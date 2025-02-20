@@ -1,4 +1,4 @@
-//checking pipeline 1
+
 import axios from 'axios';
 import { CONFIG } from './config.mjs';
 const pageSize = 10;
@@ -250,3 +250,4 @@ export function setupMicrophone() {
 document.addEventListener("DOMContentLoaded", () => {
     setupMicrophone(); 
 });
+

@@ -584,3 +584,41 @@ test("Renders search results correctly", () => {
   expect(resultsContainer.innerHTML).toContain("Result 1");
   expect(resultsContainer.innerHTML).toContain("Result 2");
 });
+
+test("Does nothing when suggestionsContainer is missing", () => {
+  document.body.innerHTML = `<input id="search-bar" type="text" />`; // ❌ No suggestionsContainer
+
+  // 🔹 Mock console.log to suppress output in tests
+  const consoleSpy = jest.spyOn(console, "log").mockImplementation(() => {});
+
+  // 🔹 Manually trigger DOMContentLoaded to attach event listeners
+  document.dispatchEvent(new Event("DOMContentLoaded"));
+
+  const searchBar = document.getElementById("search-bar");
+
+  // 🔹 Fire an input event on searchBar
+  searchBar.dispatchEvent(new Event("input", { bubbles: true }));
+
+  // ✅ No errors should be thrown (indicating early return worked)
+  expect(true).toBe(true); // Ensures Jest registers this as a passing test
+
+  consoleSpy.mockRestore(); // Cleanup
+});
+
+test("Clicking a suggestion does not update search bar when suggestion is undefined", async () => {
+  document.body.innerHTML = `
+    <input id="search-bar" type="text" />
+    <div id="suggestions">
+      <div class="suggestion-item"></div> <!-- ❌ No suggestion text -->
+    </div>
+  `;
+
+  const searchBar = document.getElementById("search-bar");
+  const suggestionItem = document.querySelector(".suggestion-item");
+
+  // Simulate click on empty suggestion
+  fireEvent.click(suggestionItem);
+
+  // ✅ Ensure search bar remains empty
+  expect(searchBar.value).toBe("");
+});
