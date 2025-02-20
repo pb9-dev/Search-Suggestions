@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="jest tests" tests="32" failures="0" errors="0" time="3.053">
+  <testsuite name="undefined" errors="0" failures="0" skipped="0" timestamp="2025-02-20T10:02:59" time="2.112" tests="32">
+    <testcase classname=" Fetch suggestions and display them" name=" Fetch suggestions and display them" time="0.054">
+    </testcase>
+    <testcase classname=" Displays search results when a search is performed" name=" Displays search results when a search is performed" time="0.049">
+    </testcase>
+    <testcase classname=" Stores search results in sessionStorage" name=" Stores search results in sessionStorage" time="0.01">
+    </testcase>
+    <testcase classname=" Calls API with correct query and pagination params" name=" Calls API with correct query and pagination params" time="0.005">
+    </testcase>
+    <testcase classname=" Handles API failures gracefully" name=" Handles API failures gracefully" time="0.006">
+    </testcase>
+    <testcase classname=" Retrieves search results from sessionStorage if available" name=" Retrieves search results from sessionStorage if available" time="0.007">
+    </testcase>
+    <testcase classname=" Pagination buttons render and trigger fetchResults" name=" Pagination buttons render and trigger fetchResults" time="0.029">
+    </testcase>
+    <testcase classname=" Updates results when pagination button is clicked" name=" Updates results when pagination button is clicked" time="0.017">
+    </testcase>
+    <testcase classname=" Too long queries do not show suggestions" name=" Too long queries do not show suggestions" time="0.009">
+    </testcase>
+    <testcase classname=" Handles empty search results gracefully" name=" Handles empty search results gracefully" time="0.006">
+    </testcase>
+    <testcase classname=" Handles API failure when fetching search results" name=" Handles API failure when fetching search results" time="0.004">
+    </testcase>
+    <testcase classname=" Handles API failure when fetching suggestions" name=" Handles API failure when fetching suggestions" time="0.032">
+    </testcase>
+    <testcase classname=" Debounces getSuggestions API call correctly" name=" Debounces getSuggestions API call correctly" time="0.012">
+    </testcase>
+    <testcase classname=" Loads query from URL on page load" name=" Loads query from URL on page load" time="0.022">
+    </testcase>
+    <testcase classname=" Fetches search results from API" name=" Fetches search results from API" time="0.006">
+    </testcase>
+    <testcase classname=" Toggles microphone on click" name=" Toggles microphone on click" time="0.005">
+    </testcase>
+    <testcase classname=" Handles API failure when logging search" name=" Handles API failure when logging search" time="0.002">
+    </testcase>
+    <testcase classname=" Generates correct pagination buttons" name=" Generates correct pagination buttons" time="0.005">
+    </testcase>
+    <testcase classname=" Pagination buttons trigger correct fetch calls" name=" Pagination buttons trigger correct fetch calls" time="0.015">
+    </testcase>
+    <testcase classname=" Pagination is not rendered if only one page exists" name=" Pagination is not rendered if only one page exists" time="0.002">
+    </testcase>
+    <testcase classname=" Disables Previous on first page and Next on last page" name=" Disables Previous on first page and Next on last page" time="0.01">
+    </testcase>
+    <testcase classname=" Pagination renders all necessary buttons" name=" Pagination renders all necessary buttons" time="0.005">
+    </testcase>
+    <testcase classname=" Both Previous and Next buttons are enabled on middle pages" name=" Both Previous and Next buttons are enabled on middle pages" time="0.006">
+    </testcase>
+    <testcase classname=" Clicking a suggestion updates search bar and hides suggestions" name=" Clicking a suggestion updates search bar and hides suggestions" time="0.009">
+    </testcase>
+    <testcase classname=" Hides suggestions container when no suggestions are returned" name=" Hides suggestions container when no suggestions are returned" time="0.007">
+    </testcase>
+    <testcase classname=" Uses correct icon for history suggestions" name=" Uses correct icon for history suggestions" time="0.005">
+    </testcase>
+    <testcase classname=" Uses correct icon for normal suggestions" name=" Uses correct icon for normal suggestions" time="0.005">
+    </testcase>
+    <testcase classname=" Hides microphone icon when speech recognition is not supported" name=" Hides microphone icon when speech recognition is not supported" time="0.002">
+    </testcase>
+    <testcase classname=" Does not hide microphone icon when speech recognition is supported" name=" Does not hide microphone icon when speech recognition is supported" time="0.002">
+    </testcase>
+    <testcase classname=" Clicking mic icon toggles active state" name=" Clicking mic icon toggles active state" time="0.003">
+    </testcase>
+    <testcase classname=" Updates search bar and redirects on speech recognition result" name=" Updates search bar and redirects on speech recognition result" time="0.002">
+    </testcase>
+    <testcase classname=" Renders search results correctly" name=" Renders search results correctly" time="0.002">
+    </testcase>
+  </testsuite>
+</testsuites>

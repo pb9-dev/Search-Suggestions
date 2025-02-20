@@ -1,0 +1,264 @@
+<html><head><meta charset="utf-8"/><title>Test Report</title><style type="text/css">:root {
+  --text-primary: #111;
+  --text-secondary: #4F4F4F;
+  --success: #006633;
+  --success-bright: #80FFBF;
+  --danger: #CC071E;
+  --danger-bright: #FBDFE0;
+  --warning: #995C00;
+  --warning-bright: #FFEEA8;
+  --panel: #eee;
+  --border: #949494;
+  --disabled: #6B6B6B;
+}
+
+html,
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 16px;
+  margin: 0;
+  padding: 0;
+  color: var(--text-primary);
+}
+body {
+  padding: 2rem 1rem;
+}
+.jesthtml-content {
+  margin: 0 auto;
+  max-width: 70rem;
+}
+header {
+  display: flex;
+  align-items: center;
+}
+#title {
+  margin: 0;
+  flex-grow: 1;
+}
+#logo {
+  height: 4rem;
+}
+#timestamp {
+  color: var(--text-secondary);
+  margin-top: 0.5rem;
+}
+
+/** SUMMARY */
+#summary {
+  color: var(--text-primary);
+  margin: 2rem 0;
+  display: flex;
+  font-family: monospace;
+  font-size: 1rem;
+}
+#summary > div {
+  margin-right: 0.5rem;
+  background: var(--panel);
+  padding: 1rem;
+  min-width: 15rem;
+}
+#summary > div:last-child {
+  margin-right: 0;
+}
+@media only screen and (max-width: 720px) {
+  #summary {
+    flex-direction: column;
+  }
+  #summary > div {
+    margin-right: 0;
+    margin-top: 1rem;
+  }
+  #summary > div:first-child {
+    margin-top: 0;
+  }
+}
+
+.summary-total {
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+.summary-passed {
+  color: var(--success);
+  border-left: 0.4rem solid var(--success);
+  padding-left: 0.5rem;
+  margin-bottom: 0.15rem;
+}
+.summary-failed,
+.summary-obsolete-snapshots {
+  color: var(--danger);
+  border-left: 0.4rem solid var(--danger);
+  padding-left: 0.5rem;
+  margin-bottom: 0.15rem;
+}
+.summary-pending {
+  color: var(--warning);
+  border-left: 0.4rem solid var(--warning);
+  padding-left: 0.5rem;
+  margin-bottom: 0.15rem;
+}
+.summary-empty {
+  color: var(--disabled);
+  border-left: 0.4rem solid var(--disabled);
+  margin-bottom: 0.15rem;
+}
+
+.test-result {
+  padding: 1rem;
+  margin-bottom: 0.25rem;
+}
+.test-result:last-child {
+  border: 0;
+}
+.test-result.passed {
+  background-color: var(--success-bright);
+  color: var(--success);
+}
+.test-result.failed {
+  background-color: var(--danger-bright);
+  color: var(--danger);
+}
+.test-result.pending {
+  background-color: var(--warning-bright);
+  color: var(--warning);
+}
+
+.test-info {
+  display: flex;
+  justify-content: space-between;
+}
+.test-suitename {
+  width: 20%;
+  text-align: left;
+  font-weight: bold;
+  word-break: break-word;
+}
+.test-title {
+  width: 40%;
+  text-align: left;
+  font-style: italic;
+}
+.test-status {
+  width: 20%;
+  text-align: right;
+}
+.test-duration {
+  width: 10%;
+  text-align: right;
+  font-size: 0.85rem;
+}
+
+.failureMessages {
+  padding: 0 1rem;
+  margin-top: 1rem;
+  border-top: 1px dashed var(--danger);
+}
+.failureMessages.suiteFailure {
+  border-top: none;
+}
+.failureMsg {
+  white-space: pre-wrap;
+  white-space: -moz-pre-wrap;
+  white-space: -pre-wrap;
+  white-space: -o-pre-wrap;
+  word-wrap: break-word;
+}
+
+.suite-container {
+  margin-bottom: 1rem;
+}
+.suite-info {
+  padding: 1rem;
+  background-color: var(--panel);
+  color: var(--text-secondary);
+  border: 0.15rem solid;
+  border-color: var(--panel);
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.25rem;
+}
+.suite-info:hover {
+  border-color: var(--border);
+  cursor: pointer;
+}
+.suite-info .suite-path {
+  word-break: break-all;
+  flex-grow: 1;
+  font-family: monospace;
+  font-size: 1rem;
+}
+.suite-info .suite-time {
+  margin-left: 1rem;
+  padding: 0.2rem 0.3rem;
+  font-size: 0.85rem;
+}
+.suite-info .suite-time.warn {
+  background-color: var(--danger);
+  color: #fff;
+}
+.suite-info:before {
+  content: "\2303";
+  display: inline-block;
+  margin-right: 1rem;
+  transform: rotate(180deg) translateY(0.15rem);
+}
+.suite-container[open] .suite-info:before {
+  transform: rotate(0deg) translateY(0.15rem);
+}
+
+/* CONSOLE LOGS */
+.suite-consolelog {
+  margin-bottom: 0.25rem;
+  padding: 1rem;
+  background-color: var(--panel);
+}
+.suite-consolelog-header {
+  font-weight: bold;
+}
+.suite-consolelog-item {
+  padding: 0.5rem;
+}
+.suite-consolelog-item pre {
+  margin: 0.5rem 0;
+  white-space: pre-wrap;
+  white-space: -moz-pre-wrap;
+  white-space: -pre-wrap;
+  white-space: -o-pre-wrap;
+  word-wrap: break-word;
+}
+.suite-consolelog-item-origin {
+  color: var(--text-secondary);
+  font-weight: bold;
+}
+.suite-consolelog-item-message {
+  color: var(--text-primary);
+  font-size: 1rem;
+  padding: 0 0.5rem;
+}
+
+/* OBSOLETE SNAPSHOTS */
+.suite-obsolete-snapshots {
+  margin-bottom: 0.25rem;
+  padding: 1rem;
+  background-color: var(--danger-bright);
+  color: var(--danger);
+}
+.suite-obsolete-snapshots-header {
+  font-weight: bold;
+}
+.suite-obsolete-snapshots-item {
+  padding: 0.5rem;
+}
+.suite-obsolete-snapshots-item pre {
+  margin: 0.5rem 0;
+  white-space: pre-wrap;
+  white-space: -moz-pre-wrap;
+  white-space: -pre-wrap;
+  white-space: -o-pre-wrap;
+  word-wrap: break-word;
+}
+.suite-obsolete-snapshots-item-message {
+  color: var(--text-primary);
+  font-size: 1rem;
+  padding: 0 0.5rem;
+}
+</style></head><body><main class="jesthtml-content"><header><h1 id="title">Test Report</h1></header><section id="metadata-container"><div id="timestamp">Started: 2025-02-20 15:32:58</div><div id="summary"><div id="suite-summary"><div class="summary-total">Suites (1)</div><div class="summary-passed ">1 passed</div><div class="summary-failed  summary-empty">0 failed</div><div class="summary-pending  summary-empty">0 pending</div></div><div id="test-summary"><div class="summary-total">Tests (32)</div><div class="summary-passed ">32 passed</div><div class="summary-failed  summary-empty">0 failed</div><div class="summary-pending  summary-empty">0 pending</div></div></div></section><details id="suite-1" class="suite-container" open=""><summary class="suite-info"><div class="suite-path">C:\SearchApi\SearchEngine-frontend\script_unit.test.mjs</div><div class="suite-time">2.112s</div></summary><div class="suite-tests"><div class="test-result passed"><div class="test-info"><div class="test-suitename"> </div><div class="test-title">Fetch suggestions and display them</div><div class="test-status">passed</div><div class="test-duration">0.054s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename"> </div><div class="test-title">Displays search results when a search is performed</div><div class="test-status">passed</div><div class="test-duration">0.049s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename"> </div><div class="test-title">Stores search results in sessionStorage</div><div class="test-status">passed</div><div class="test-duration">0.01s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename"> </div><div class="test-title">Calls API with correct query and pagination params</div><div class="test-status">passed</div><div class="test-duration">0.005s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename"> </div><div class="test-title">Handles API failures gracefully</div><div class="test-status">passed</div><div class="test-duration">0.006s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename"> </div><div class="test-title">Retrieves search results from sessionStorage if available</div><div class="test-status">passed</div><div class="test-duration">0.007s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename"> </div><div class="test-title">Pagination buttons render and trigger fetchResults</div><div class="test-status">passed</div><div class="test-duration">0.029s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename"> </div><div class="test-title">Updates results when pagination button is clicked</div><div class="test-status">passed</div><div class="test-duration">0.017s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename"> </div><div class="test-title">Too long queries do not show suggestions</div><div class="test-status">passed</div><div class="test-duration">0.009s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename"> </div><div class="test-title">Handles empty search results gracefully</div><div class="test-status">passed</div><div class="test-duration">0.006s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename"> </div><div class="test-title">Handles API failure when fetching search results</div><div class="test-status">passed</div><div class="test-duration">0.004s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename"> </div><div class="test-title">Handles API failure when fetching suggestions</div><div class="test-status">passed</div><div class="test-duration">0.032s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename"> </div><div class="test-title">Debounces getSuggestions API call correctly</div><div class="test-status">passed</div><div class="test-duration">0.012s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename"> </div><div class="test-title">Loads query from URL on page load</div><div class="test-status">passed</div><div class="test-duration">0.022s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename"> </div><div class="test-title">Fetches search results from API</div><div class="test-status">passed</div><div class="test-duration">0.006s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename"> </div><div class="test-title">Toggles microphone on click</div><div class="test-status">passed</div><div class="test-duration">0.005s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename"> </div><div class="test-title">Handles API failure when logging search</div><div class="test-status">passed</div><div class="test-duration">0.002s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename"> </div><div class="test-title">Generates correct pagination buttons</div><div class="test-status">passed</div><div class="test-duration">0.005s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename"> </div><div class="test-title">Pagination buttons trigger correct fetch calls</div><div class="test-status">passed</div><div class="test-duration">0.015s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename"> </div><div class="test-title">Pagination is not rendered if only one page exists</div><div class="test-status">passed</div><div class="test-duration">0.002s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename"> </div><div class="test-title">Disables Previous on first page and Next on last page</div><div class="test-status">passed</div><div class="test-duration">0.01s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename"> </div><div class="test-title">Pagination renders all necessary buttons</div><div class="test-status">passed</div><div class="test-duration">0.005s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename"> </div><div class="test-title">Both Previous and Next buttons are enabled on middle pages</div><div class="test-status">passed</div><div class="test-duration">0.006s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename"> </div><div class="test-title">Clicking a suggestion updates search bar and hides suggestions</div><div class="test-status">passed</div><div class="test-duration">0.009s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename"> </div><div class="test-title">Hides suggestions container when no suggestions are returned</div><div class="test-status">passed</div><div class="test-duration">0.007s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename"> </div><div class="test-title">Uses correct icon for history suggestions</div><div class="test-status">passed</div><div class="test-duration">0.005s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename"> </div><div class="test-title">Uses correct icon for normal suggestions</div><div class="test-status">passed</div><div class="test-duration">0.005s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename"> </div><div class="test-title">Hides microphone icon when speech recognition is not supported</div><div class="test-status">passed</div><div class="test-duration">0.002s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename"> </div><div class="test-title">Does not hide microphone icon when speech recognition is supported</div><div class="test-status">passed</div><div class="test-duration">0.002s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename"> </div><div class="test-title">Clicking mic icon toggles active state</div><div class="test-status">passed</div><div class="test-duration">0.003s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename"> </div><div class="test-title">Updates search bar and redirects on speech recognition result</div><div class="test-status">passed</div><div class="test-duration">0.002s</div></div></div><div class="test-result passed"><div class="test-info"><div class="test-suitename"> </div><div class="test-title">Renders search results correctly</div><div class="test-status">passed</div><div class="test-duration">0.002s</div></div></div></div></details></main></body></html>

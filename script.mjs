@@ -95,7 +95,7 @@ export function renderPagination(query, currentPage, totalPages) {
     paginationContainer.appendChild(nextButton); 
 }
 
-function renderResults(results) {
+export function renderResults(results) {
     const resultsContainer = document.getElementById("search-results");
     if (!resultsContainer) return;
 
@@ -113,6 +113,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const suggestionsContainer = document.getElementById("suggestions");
     
     if (searchBar) {
+        console.log("Adding keydown event listener to search-bar");
         searchBar.addEventListener("input", function () {
             if (!suggestionsContainer) return;
             const query = this.value.trim();
@@ -130,9 +131,11 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
         searchBar.addEventListener("keydown", async function (e) {
+            console.log("Key pressed:", e.key); 
             if (e.key === "Enter") {
                 const query = this.value.trim();
                 if (query) {
+                    console.log("Calling logSearch with:", query); 
                     await logSearch(query);
                     window.location.href = `search.html?query=${encodeURIComponent(query)}`;
                 }
@@ -142,6 +145,8 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 export async function getSuggestions(query) {
+    console.log("Query received:", query.length);
+
     const suggestionsContainer = document.getElementById("suggestions");
 
 

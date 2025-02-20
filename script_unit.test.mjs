@@ -2,7 +2,7 @@ import { fireEvent, screen, waitFor } from "@testing-library/dom";
 import "@testing-library/jest-dom";
 import { jest } from "@jest/globals";
 import axios from "axios";
-import { getSuggestions, fetchResults, logSearch, renderPagination } from "./script.mjs";
+import { getSuggestions, fetchResults, logSearch, renderPagination, renderResults } from "./script.mjs";
 import { CONFIG } from "./config.mjs"; 
 import { setupMicrophone } from "./script.mjs";
 
@@ -115,26 +115,36 @@ test("Retrieves search results from sessionStorage if available", async () => {
   expect(screen.getByText("Cached Result")).toBeInTheDocument();
 });
 
-test("Renders correct pagination buttons based on total pages", () => {
+test("Pagination buttons render and trigger fetchResults", async () => {
+  jest.clearAllMocks();
   document.body.innerHTML = `<div id="pagination"></div>`;
 
-  const renderPagination = (query, currentPage, totalPages) => {
-    const paginationContainer = document.getElementById("pagination");
-    paginationContainer.innerHTML = "";
-    for (let i = 1; i <= totalPages; i++) {
-      const btn = document.createElement("button");
-      btn.textContent = i;
-      btn.onclick = () => fetchResults(query, i);
-      paginationContainer.appendChild(btn);
-    }
-  };
+  renderPagination("test", 2, 5); // Start on Page 2 of 5
 
-  renderPagination("test", 1, 3);
+  axios.get.mockResolvedValue({ data: { results: [{ text: "New Page Result" }], totalResults: 50 } });
 
-  expect(screen.getByText("1")).toBeInTheDocument();
-  expect(screen.getByText("2")).toBeInTheDocument();
-  expect(screen.getByText("3")).toBeInTheDocument();
+  // Click Next (should go to page 3)
+  fireEvent.click(screen.getByText("Next"));
+
+  await waitFor(() => {
+    console.log("Called fetchResults for:", axios.get.mock.calls);
+    expect(axios.get).toHaveBeenCalledWith(
+      expect.stringContaining(CONFIG.BASE_URL),
+      expect.objectContaining({ params: { query: "test", pageSize: 10, page: 3 } })
+    );
+  });
+
+  // Click Previous (should go back to page 2)
+  fireEvent.click(screen.getByText("Previous"));
+
+  await waitFor(() => {
+    expect(axios.get).toHaveBeenCalledWith(
+      expect.stringContaining(CONFIG.BASE_URL),
+      expect.objectContaining({ params: { query: "test", pageSize: 10, page: 2 } })
+    );
+  });
 });
+
 
 test("Updates results when pagination button is clicked", async () => {
   document.body.innerHTML = `<div id="pagination"></div><div id="search-results"></div>`;
@@ -153,46 +163,36 @@ test("Updates results when pagination button is clicked", async () => {
   expect(screen.getByText("Page 2 Result")).toBeInTheDocument();
 });
 
-test("Triggers search when Enter key is pressed", async () => {
-  document.body.innerHTML = `<input id="search-bar" type="text" />`;
 
-  const searchBar = screen.getByRole("textbox");
-  searchBar.value = "test query";
+test("Too long queries do not show suggestions", async () => {
+  document.body.innerHTML = `<input id="search-bar" type="text" />
+                             <div id="suggestions" style="display: block;"></div>`;
 
-  // Mocked async behavior inside the event listener
-  searchBar.addEventListener("keydown", async (e) => {
-    if (e.key === "Enter") {
-      // Use a small delay to ensure async resolution
-      await window.logSearch(searchBar.value);
-      window.location.assign(`search.html?query=${encodeURIComponent(searchBar.value)}`);
-    }
+  const searchBar = document.getElementById("search-bar");
+  const suggestionsContainer = document.getElementById("suggestions");
+
+  // Manually trigger DOMContentLoaded to attach event listeners
+  document.dispatchEvent(new Event("DOMContentLoaded"));
+
+  // Spy on console.error
+  const consoleSpy = jest.spyOn(console, "error").mockImplementation(() => {});
+
+  // Set input value
+  searchBar.value = "a".repeat(21);
+
+  // Dispatch actual input event (ensuring listener fires)
+  searchBar.dispatchEvent(new Event("input", { bubbles: true }));
+
+  // Wait for the function to execute
+  await waitFor(() => {
+    expect(suggestionsContainer.innerHTML).toBe("");
+    expect(window.getComputedStyle(suggestionsContainer).display).toBe("none");
+    expect(consoleSpy).toHaveBeenCalledWith("Empty Query or Query length more than 20 is not allowed");
   });
 
-  fireEvent.keyDown(searchBar, { key: "Enter", code: "Enter" });
-
-  // Wait for window.logSearch to be called
-  await waitFor(() => expect(window.logSearch).toHaveBeenCalledWith("test query"));
-  
-  // Ensure location.assign was called with the expected query
-  expect(window.location.assign).toHaveBeenCalledWith("search.html?query=test%20query");
+  consoleSpy.mockRestore(); // Clean up spy
 });
 
-
-test("Prevents searches with empty or too long queries", async () => {
-  document.body.innerHTML = `<input id="search-bar" type="text" />`;
-
-  const searchBar = screen.getByRole("textbox");
-
-  fireEvent.input(searchBar, { target: { value: "" } });
-  fireEvent.keyDown(searchBar, { key: "Enter", code: "Enter" });
-
-  expect(window.location.href).not.toContain("search.html?query=");
-
-  fireEvent.input(searchBar, { target: { value: "a".repeat(21) } });
-  fireEvent.keyDown(searchBar, { key: "Enter", code: "Enter" });
-
-  expect(window.location.href).not.toContain("search.html?query=");
-});
 
 // New test cases
 
@@ -220,47 +220,36 @@ test("Handles API failure when fetching suggestions", async () => {
   axios.get.mockRejectedValue(new Error("Suggestion error"));
   await expect(getSuggestions("test")).rejects.toThrow("Suggestion error");
 });
-
-jest.useFakeTimers();
-
 test("Debounces getSuggestions API call correctly", async () => {
-  document.body.innerHTML = `
-    <input id="search-bar" />
-    <div id="suggestions"></div> <!-- Ensure this element exists -->
-  `;
+  jest.useFakeTimers(); // Enable fake timers
 
-  const searchBar = screen.getByRole("textbox");
+  document.body.innerHTML = `<input id="search-bar" /><div id="suggestions"></div>`;
 
+  // 🔹 Manually trigger DOMContentLoaded so the input event listener attaches
+  document.dispatchEvent(new Event("DOMContentLoaded"));
+
+  const searchBar = document.getElementById("search-bar");
   axios.get.mockResolvedValueOnce({ data: ["test1", "test2"] });
 
+  // 🔹 Fire multiple rapid input events
   fireEvent.input(searchBar, { target: { value: "h" } });
   fireEvent.input(searchBar, { target: { value: "he" } });
   fireEvent.input(searchBar, { target: { value: "hel" } });
 
+  // Advance timers and wait for debounce to trigger
   jest.advanceTimersByTime(300);
 
-  // Call getSuggestions now that #suggestions exists
-  await getSuggestions("hel");
-
-  await waitFor(() => expect(axios.get).toHaveBeenCalledTimes(1));
+  await waitFor(() => {
+    expect(axios.get).toHaveBeenCalledTimes(1);
+  });
 
   expect(axios.get).toHaveBeenCalledWith(`${CONFIG.BASE_URL}`, {
     params: { query: "hel" },
   });
+
+  jest.useRealTimers(); // Restore real timers
 });
 
-jest.useRealTimers();
-
-
-test("Disables previous button on first page", () => {
-  document.body.innerHTML = '<button id="prev-button" disabled></button>';
-  expect(screen.getByRole("button")).toBeDisabled();
-});
-
-test("Disables next button on last page", () => {
-  document.body.innerHTML = '<button id="next-button" disabled></button>';
-  expect(screen.getByRole("button")).toBeDisabled();
-});
 
 test("Loads query from URL on page load", async () => {
   delete window.location;
@@ -339,24 +328,259 @@ test("Generates correct pagination buttons", () => {
   expect(screen.getByText("5")).toBeInTheDocument();
 });
 
-// test("Calls fetchResults with correct page number when clicking a page button", async () => {
-//   document.body.innerHTML = `<div id="pagination"></div>`;
+test("Pagination buttons trigger correct fetch calls", async () => {
+  document.body.innerHTML = `<div id="pagination"></div><div id="search-results"></div>`;
 
-//   // ✅ Spy on fetchResults BEFORE calling renderPagination
-//   const fetchResultsMock = jest.spyOn(scriptModule, "fetchResults").mockImplementation(() => {});
+  axios.get.mockResolvedValue({ data: { results: [{ text: "Page 2 Result" }], totalResults: 10 } });
 
-//   renderPagination("test", 1, 3); // Render pagination
+  renderPagination("test", 1, 3);
 
-//   const pageButton = screen.getByText("2");
-//   expect(pageButton).toBeInTheDocument();
+  fireEvent.click(screen.getByText("2"));
+  // console.log(CONFIG.BASE_URL, "is base url");
 
-//   fireEvent.click(pageButton); // Click page 2
+  await waitFor(() => expect(axios.get).toHaveBeenCalledWith(
+    expect.stringContaining(CONFIG.BASE_URL),
+    expect.objectContaining({ params: { query: "test", pageSize: 10, page: 2 } })
+  ));
 
-//   await waitFor(() => {
-//     console.log("fetchResultsMock Calls:", fetchResultsMock.mock.calls);
-//     expect(fetchResultsMock).toHaveBeenCalledTimes(1);
-//     expect(fetchResultsMock).toHaveBeenCalledWith("test", 2);
-//   });
+  expect(screen.getByText("Page 2 Result")).toBeInTheDocument();
+});
 
-//   fetchResultsMock.mockRestore(); // ✅ Restore function after test
-// });
+test("Pagination is not rendered if only one page exists", () => {
+  document.body.innerHTML = `<div id="pagination"></div>`;
+  renderPagination("test", 1, 1);
+
+  expect(document.getElementById("pagination").innerHTML).toBe(""); // Should be empty
+});
+
+test("Disables Previous on first page and Next on last page", () => {
+  document.body.innerHTML = `<div id="pagination"></div>`;
+
+  // Render on page 1 (should disable Previous)
+  renderPagination("test", 1, 5);
+  expect(screen.getByText("Previous")).toBeDisabled();
+  expect(screen.getByText("Next")).not.toBeDisabled();
+
+  // Render on last page (should disable Next)
+  document.body.innerHTML = `<div id="pagination"></div>`;
+  renderPagination("test", 5, 5);
+  expect(screen.getByText("Next")).toBeDisabled();
+  expect(screen.getByText("Previous")).not.toBeDisabled();
+});
+
+test("Pagination renders all necessary buttons", () => {
+  document.body.innerHTML = `<div id="pagination"></div>`;
+
+  renderPagination("test", 3, 5); // Page 3 of 5
+
+  expect(screen.getByText("Previous")).toBeInTheDocument();
+  expect(screen.getByText("Next")).toBeInTheDocument();
+  expect(screen.getByText("1")).toBeInTheDocument();
+  expect(screen.getByText("5")).toBeInTheDocument();
+});
+
+test("Both Previous and Next buttons are enabled on middle pages", () => {
+  document.body.innerHTML = `<div id="pagination"></div>`;
+
+  renderPagination("test", 3, 5); // Page 3 of 5
+
+  expect(screen.getByText("Previous")).not.toBeDisabled();
+  expect(screen.getByText("Next")).not.toBeDisabled();
+});
+
+test("Clicking a suggestion updates search bar and hides suggestions", async () => {
+  document.body.innerHTML = `
+    <input id="search-bar" type="text" />
+    <div id="suggestions"></div> <!-- Start empty, let getSuggestions populate it -->
+  `;
+
+  const searchBar = document.getElementById("search-bar");
+  const suggestionsContainer = document.getElementById("suggestions");
+
+
+  axios.get.mockResolvedValue({
+    data: [{ text: "Suggested Item" }],
+  });
+  await getSuggestions("test");
+
+  await waitFor(() => {
+    expect(suggestionsContainer.innerHTML).not.toBe(""); // Ensure it's populated
+  });
+
+  const suggestionItem = document.querySelector(".suggestion-item");
+  expect(suggestionItem).toBeInTheDocument(); // Ensure the suggestion is created
+
+  // 🔹 Simulate clicking the suggestion
+  fireEvent.click(suggestionItem);
+
+  // 🔹 Wait for updates
+  await waitFor(() => {
+    expect(searchBar.value).toBe("Suggested Item"); // 
+    expect(suggestionsContainer.innerHTML).toBe(""); //
+    expect(window.getComputedStyle(suggestionsContainer).display).toBe("none"); // 
+  });
+});
+
+test("Hides suggestions container when no suggestions are returned", async () => {
+  document.body.innerHTML = `
+    <input id="search-bar" type="text" />
+    <div id="suggestions" style="display: block;">Existing Content</div> 
+  `;
+
+  const suggestionsContainer = document.getElementById("suggestions");
+
+  // 🔹 Mock API response to return an empty array (triggers the else block)
+  axios.get.mockResolvedValue({ data: [] });
+
+  // 🔹 Call getSuggestions with a query
+  await getSuggestions("test");
+
+  // 🔹 Wait for UI updates
+  await waitFor(() => {
+    expect(suggestionsContainer.innerHTML).toBe(""); // ✅ Suggestions should be cleared
+    expect(window.getComputedStyle(suggestionsContainer).display).toBe("none"); // ✅ Container should be hidden
+  });
+});
+
+test("Uses correct icon for history suggestions", async () => {
+  document.body.innerHTML = `
+    <input id="search-bar" type="text" />
+    <div id="suggestions"></div> 
+  `;
+
+  axios.get.mockResolvedValue({ data: [{ text: "History Item", isHistory: true }] });
+
+  await getSuggestions("history");
+
+  await waitFor(() => {
+    expect(document.querySelector(".fa-globe")).toBeInTheDocument();
+  });
+});
+
+test("Uses correct icon for normal suggestions", async () => {
+  document.body.innerHTML = `
+    <input id="search-bar" type="text" />
+    <div id="suggestions"></div> 
+  `;
+
+  axios.get.mockResolvedValue({ data: [{ text: "Search Item", isHistory: false }] });
+
+  await getSuggestions("search");
+
+  await waitFor(() => {
+    expect(document.querySelector(".fa-search")).toBeInTheDocument();
+  });
+});
+
+test("Hides microphone icon when speech recognition is not supported", () => {
+  document.body.innerHTML = `
+    <input id="search-bar" type="text" />
+    <i id="mic-icon" style="display: block;"></i>
+  `;
+
+  // 🔹 Remove SpeechRecognition from window object
+  delete window.SpeechRecognition;
+  delete window.webkitSpeechRecognition;
+
+  setupMicrophone(); // Call function
+
+  const micIcon = document.getElementById("mic-icon");
+  expect(micIcon.style.display).toBe("none"); // ✅ Mic should be hidden
+});
+
+test("Does not hide microphone icon when speech recognition is supported", () => {
+  document.body.innerHTML = `
+    <input id="search-bar" type="text" />
+    <i id="mic-icon" style="display: block;"></i>
+  `;
+
+  // 🔹 Mock SpeechRecognition support
+  window.SpeechRecognition = jest.fn();
+
+  setupMicrophone(); // Call function
+
+  const micIcon = document.getElementById("mic-icon");
+  expect(micIcon.style.display).not.toBe("none"); // ✅ Mic should remain visible
+});
+
+test("Clicking mic icon toggles active state", () => {
+  document.body.innerHTML = `
+    <input id="search-bar" type="text" />
+    <i id="mic-icon"></i>
+  `;
+
+  // 🔹 Mock SpeechRecognition
+  window.SpeechRecognition = jest.fn().mockImplementation(() => ({
+    start: jest.fn(),
+    stop: jest.fn()
+  }));
+
+  const recognition = setupMicrophone(); // Call function
+  const micIcon = document.getElementById("mic-icon");
+
+  // 🔹 Simulate first click (activate mic)
+  micIcon.click();
+  expect(micIcon.classList.contains("mic-active")).toBe(true);
+
+  // 🔹 Simulate second click (deactivate mic)
+  micIcon.click();
+  expect(micIcon.classList.contains("mic-active")).toBe(false);
+});
+
+jest.useFakeTimers(); // Use Jest's fake timers for setTimeout control
+
+test("Updates search bar and redirects on speech recognition result", async () => {
+  document.body.innerHTML = `
+    <input id="search-bar" type="text" />
+    <i id="mic-icon"></i>
+  `;
+
+  // 🔹 Mock SpeechRecognition and its methods
+  const mockStart = jest.fn();
+  const mockStop = jest.fn();
+  const mockRecognition = {
+    start: mockStart,
+    stop: mockStop,
+    onresult: null,
+    onerror: null,
+    onend: null,
+  };
+  
+  window.SpeechRecognition = jest.fn(() => mockRecognition);
+
+  setupMicrophone(); // Call function to initialize mic
+
+  // 🔹 Simulate speech recognition result event
+  const searchBar = document.getElementById("search-bar");
+  const mockEvent = {
+    results: [[{ transcript: "Hello World" }]], // Simulated speech result
+  };
+
+  // Trigger the event
+  mockRecognition.onresult(mockEvent);
+
+  // 🔹 Ensure search bar is updated
+  expect(searchBar.value).toBe("Hello World");
+
+  // 🔹 Fast-forward time to check if redirection occurs after 1500ms
+  jest.advanceTimersByTime(1500);
+  expect(window.location.href).toBe("search.html?query=Hello%20World");
+
+  jest.useRealTimers(); // Restore real timers
+});
+
+test("Renders search results correctly", () => {
+  document.body.innerHTML = `<div id="search-results"></div>`;
+
+  const results = [
+    { text: "Result 1" },
+    { text: "Result 2" },
+  ];
+
+  renderResults(results);
+
+  const resultsContainer = document.getElementById("search-results");
+  expect(resultsContainer.children.length).toBe(2);
+  expect(resultsContainer.innerHTML).toContain("Result 1");
+  expect(resultsContainer.innerHTML).toContain("Result 2");
+});
