@@ -8,27 +8,20 @@ import { setupMicrophone } from "./script.mjs";
 
 import * as scriptModule from "./script.mjs";
 // Mock axios
-jest.mock("axios", () => ({
-  get: jest.fn().mockResolvedValue({
-    data: { results: [{ text: "Result 1" }], totalResults: 20 }, 
-  }),
-  post: jest.fn(),
-}));
+// jest.mock("axios", () => ({
+//   get: jest.fn().mockResolvedValue({
+//     data: { results: [{ text: "Result 1" }], totalResults: 20 }, 
+//   }),
+//   post: jest.fn().mockResolvedValue({ data: {} }), 
+// }));
+// jest.mock("axios");
+jest.mock("axios");
 
 beforeEach(() => {
   document.body.innerHTML = "";
   sessionStorage.clear();
   jest.clearAllMocks();
   jest.useFakeTimers();
-
-  // Directly mock logSearch on window
-  window.logSearch = jest.fn().mockResolvedValue();
-
-  // Mock window.location.assign to track the redirect
-  Object.defineProperty(window, "location", {
-    writable: true,
-    value: { assign: jest.fn(), href: "" },
-  });
 });
 
 test("Fetch suggestions and display them", async () => {
@@ -651,4 +644,25 @@ test("Removes mic-active class when recognition ends", () => {
 
   const micIcon = document.getElementById("mic-icon");
   expect(micIcon.classList.contains("mic-active")).toBe(false); // ✅ mic-active should be removed
+});
+
+test("Pressing Enter triggers search and redirects", async () => {
+  document.body.innerHTML = `<input id="search-bar" type="text" />`;
+
+  document.dispatchEvent(new Event("DOMContentLoaded")); // Ensure event listeners attach
+
+  const searchBar = document.getElementById("search-bar");
+  searchBar.value = "test query";
+
+  delete window.location;
+  window.location = { assign: jest.fn(), href: "" }; // ✅ Mock href properly
+
+  fireEvent.keyDown(searchBar, { key: "Enter", code: "Enter", bubbles: true });
+
+  await waitFor(() => expect(axios.post).toHaveBeenCalledTimes(1));
+
+  // ✅ Check if `window.location.href` changed
+  await waitFor(() => {
+    expect(window.location.href).toBe("search.html?query=test%20query");
+  });
 });
