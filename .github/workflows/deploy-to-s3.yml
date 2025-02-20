@@ -24,14 +24,39 @@ jobs:
         with:
           node-version: 22
 
+      - name: Print Installed Dependencies
+        run: npm list --depth=0  
+      - name: Check Jest Version
+        run: npx jest --version
+
       - name: Run Jest Tests
         run: npm test
-
-      - name: Upload Test Reports
+      - name: Check if 'results' folder exists
+        run: |
+          if [ -d "results" ]; then
+            echo "'results' folder exists."
+            ls -R results  # List contents inside 'results' directory
+          else
+            echo "'results' folder does not exist."
+          fi
+      - name: Upload JUnit Report
         uses: actions/upload-artifact@v4
         with:
-          name: test-reports
-          path: results/
+          name: junit-report
+          path: results/junit.xml
+
+      - name: Upload HTML Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: html-test-report
+          path: results/test-report.html
+
+
+      - name: Upload Jest Coverage Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: jest-coverage-report
+          path: coverage/ 
 
   deploy:
     name: Deploy to AWS S3
