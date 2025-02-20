@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1740046594222" clover="3.2.0">
-  <project timestamp="1740046594222" name="All files">
-    <metrics statements="147" coveredstatements="140" conditionals="58" coveredconditionals="49" methods="23" coveredmethods="20" elements="228" coveredelements="209" complexity="0" loc="147" ncloc="147" packages="1" files="2" classes="2"/>
+<coverage generated="1740046682904" clover="3.2.0">
+  <project timestamp="1740046682904" name="All files">
+    <metrics statements="147" coveredstatements="140" conditionals="58" coveredconditionals="49" methods="23" coveredmethods="22" elements="228" coveredelements="211" complexity="0" loc="147" ncloc="147" packages="1" files="2" classes="2"/>
     <file name="config.mjs" path="C:\SearchApi\SearchEngine-frontend\config.mjs">
       <metrics statements="1" coveredstatements="1" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
       <line num="1" count="1" type="stmt"/>
     </file>
     <file name="script.mjs" path="C:\SearchApi\SearchEngine-frontend\script.mjs">
-      <metrics statements="146" coveredstatements="139" conditionals="58" coveredconditionals="49" methods="23" coveredmethods="20"/>
+      <metrics statements="146" coveredstatements="139" conditionals="58" coveredconditionals="49" methods="23" coveredmethods="22"/>
       <line num="4" count="1" type="stmt"/>
       <line num="6" count="1" type="stmt"/>
       <line num="8" count="1" type="stmt"/>
@@ -127,31 +127,31 @@
       <line num="199" count="1" type="stmt"/>
       <line num="200" count="1" type="stmt"/>
       <line num="204" count="1" type="stmt"/>
-      <line num="209" count="9" type="stmt"/>
-      <line num="210" count="9" type="stmt"/>
-      <line num="212" count="9" type="cond" truecount="2" falsecount="0"/>
-      <line num="214" count="5" type="cond" truecount="4" falsecount="0"/>
+      <line num="209" count="11" type="stmt"/>
+      <line num="210" count="11" type="stmt"/>
+      <line num="212" count="11" type="cond" truecount="2" falsecount="0"/>
+      <line num="214" count="7" type="cond" truecount="4" falsecount="0"/>
       <line num="215" count="1" type="stmt"/>
       <line num="216" count="1" type="stmt"/>
-      <line num="219" count="4" type="cond" truecount="1" falsecount="1"/>
-      <line num="220" count="4" type="stmt"/>
-      <line num="222" count="4" type="stmt"/>
-      <line num="223" count="4" type="stmt"/>
-      <line num="224" count="4" type="stmt"/>
-      <line num="226" count="4" type="stmt"/>
+      <line num="219" count="6" type="cond" truecount="1" falsecount="1"/>
+      <line num="220" count="6" type="stmt"/>
+      <line num="222" count="6" type="stmt"/>
+      <line num="223" count="6" type="stmt"/>
+      <line num="224" count="6" type="stmt"/>
+      <line num="226" count="6" type="stmt"/>
       <line num="227" count="4" type="cond" truecount="2" falsecount="0"/>
       <line num="228" count="2" type="stmt"/>
       <line num="229" count="2" type="stmt"/>
       <line num="231" count="2" type="stmt"/>
       <line num="232" count="2" type="stmt"/>
-      <line num="236" count="4" type="stmt"/>
+      <line num="236" count="6" type="stmt"/>
       <line num="237" count="1" type="cond" truecount="1" falsecount="1"/>
       <line num="238" count="1" type="stmt"/>
       <line num="239" count="1" type="stmt"/>
       <line num="240" count="1" type="stmt"/>
-      <line num="245" count="4" type="stmt"/>
-      <line num="246" count="4" type="stmt"/>
-      <line num="248" count="4" type="stmt"/>
+      <line num="245" count="6" type="stmt"/>
+      <line num="246" count="6" type="stmt"/>
+      <line num="248" count="6" type="stmt"/>
       <line num="250" count="1" type="stmt"/>
       <line num="251" count="4" type="stmt"/>
     </file>
