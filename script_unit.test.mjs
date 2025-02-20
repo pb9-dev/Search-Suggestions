@@ -604,3 +604,51 @@ test("Does nothing when suggestionsContainer is missing", () => {
 
   consoleSpy.mockRestore(); // Cleanup
 });
+
+test("Removes mic-active class on recognition error", () => {
+  document.body.innerHTML = `
+    <input id="search-bar" type="text" />
+    <i id="mic-icon" class="mic-active"></i>
+  `;
+
+  // 🔹 Mock SpeechRecognition
+  const mockRecognition = {
+    start: jest.fn(),
+    stop: jest.fn(),
+    onerror: null,
+    onend: null,
+  };
+  window.SpeechRecognition = jest.fn(() => mockRecognition);
+
+  setupMicrophone(); // Initialize microphone logic
+
+  // 🔹 Trigger onerror event
+  mockRecognition.onerror();
+
+  const micIcon = document.getElementById("mic-icon");
+  expect(micIcon.classList.contains("mic-active")).toBe(false); // ✅ mic-active should be removed
+});
+
+test("Removes mic-active class when recognition ends", () => {
+  document.body.innerHTML = `
+    <input id="search-bar" type="text" />
+    <i id="mic-icon" class="mic-active"></i>
+  `;
+
+  // 🔹 Mock SpeechRecognition
+  const mockRecognition = {
+    start: jest.fn(),
+    stop: jest.fn(),
+    onerror: null,
+    onend: null,
+  };
+  window.SpeechRecognition = jest.fn(() => mockRecognition);
+
+  setupMicrophone(); // Initialize microphone logic
+
+  // 🔹 Trigger onend event
+  mockRecognition.onend();
+
+  const micIcon = document.getElementById("mic-icon");
+  expect(micIcon.classList.contains("mic-active")).toBe(false); // ✅ mic-active should be removed
+});
