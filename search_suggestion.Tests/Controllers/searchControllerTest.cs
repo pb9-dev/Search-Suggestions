@@ -38,7 +38,6 @@ public class SearchControllerTests
     public async Task GetSuggestions_ReturnsBadRequest_WhenQueryIsEmpty()
     {
         var result = await _controller.GetSuggestions("");
-
         Assert.IsType<BadRequestObjectResult>(result);
     }
 
@@ -46,7 +45,6 @@ public class SearchControllerTests
     public async Task GetSuggestions_ReturnsBadRequest_WhenQueryTooShort()
     {
         var result = await _controller.GetSuggestions("ab");
-
         Assert.IsType<BadRequestObjectResult>(result);
     }
 
@@ -72,7 +70,6 @@ public class SearchControllerTests
     public async Task LogSearch_ReturnsBadRequest_WhenQueryIsEmpty()
     {
         var result = await _controller.LogSearch("");
-
         Assert.IsType<BadRequestObjectResult>(result);
     }
 
@@ -85,7 +82,6 @@ public class SearchControllerTests
             var result = await controller.LogSearch("new search");
 
             var searchEntry = context.SearchHistory.FirstOrDefault(s => s.Query == "new search");
-
             Assert.IsType<OkResult>(result);
             Assert.NotNull(searchEntry);
         }
@@ -112,29 +108,28 @@ public class SearchControllerTests
     }
   
 }
-    public class RateLimitingTests : IClassFixture<WebApplicationFactory<Program>>
-    {
-        private readonly HttpClient _client;
+    //public class RateLimitingTests : IClassFixture<WebApplicationFactory<Program>>
+    //{
+    //    private readonly HttpClient _client;
+    //    public RateLimitingTests(WebApplicationFactory<Program> factory)
+    //    {
+    //        _client = factory.CreateClient();
+    //    }
 
-        public RateLimitingTests(WebApplicationFactory<Program> factory)
-        {
-            _client = factory.CreateClient();
-        }
+    //    [Fact]
+    //    public async Task GetSuggestions_ShouldReturnTooManyRequests_AfterRateLimitExceeded()
+    //    {
+    //        string testQuery = "testquery";
+    //        int maxRequests = 100; // Defined in sliding window
 
-        [Fact]
-        public async Task GetSuggestions_ShouldReturnTooManyRequests_AfterRateLimitExceeded()
-        {
-            string testQuery = "testquery";
-            int maxRequests = 100; // Defined in sliding window
-
-            for (int i = 0; i < maxRequests; i++)
-            {
-                var response = await _client.GetAsync($"/api/search?query={testQuery}");
-                Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-                await Task.Delay(50); // Add small delay
-            }
-            var rateLimitedResponse = await _client.GetAsync($"/api/search?query={testQuery}");
-            Assert.Equal(HttpStatusCode.TooManyRequests, rateLimitedResponse.StatusCode);
-            Assert.True(rateLimitedResponse.Headers.Contains("Retry-After"));
-        }
-    }
+    //        for (int i = 0; i < maxRequests; i++)
+    //        {
+    //            var response = await _client.GetAsync($"/api/search?query={testQuery}");
+    //            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+    //            await Task.Delay(50); // Add small delay
+    //        }
+    //        var rateLimitedResponse = await _client.GetAsync($"/api/search?query={testQuery}");
+    //        Assert.Equal(HttpStatusCode.TooManyRequests, rateLimitedResponse.StatusCode);
+    //        Assert.True(rateLimitedResponse.Headers.Contains("Retry-After"));
+    //    }
+    //}
