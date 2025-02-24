@@ -1,0 +1,37 @@
+# Ignore build output
+bin/
+obj/
+TestResults/
+
+# Ignore Visual Studio and Rider files
+.vs/
+.idea/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.cache
+
+#Ignore dependencies (NuGet & npm)
+packages/
+node_modules/ 
+
+# Ignore Logs & Debug Files
+*.log
+*.tmp
+*.cache
+*.pdb
+
+# Ignore Secrets & Configuration Files
+appsettings.Development.json
+appsettings.Production.json
+appsettings.Staging.json
+secrets.json
+
+# Ignore System Files (Windows & macOS)
+Thumbs.db
+.DS_Store
+
+# Ensure GitHub Workflows Are Tracked
+!.github/
+!.github/workflows/
