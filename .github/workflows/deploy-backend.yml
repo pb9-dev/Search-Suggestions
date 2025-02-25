@@ -60,8 +60,7 @@ jobs:
 
       - name: Package & Upload to S3
         run: |
-          cd out
-          zip -r backend.zip .
+          zip -r backend.zip appspec.yml scripts/ out/
           aws s3 cp backend.zip s3://${{ secrets.S3_BUCKET }}/backend.zip
 
       - name: Trigger AWS CodeDeploy
