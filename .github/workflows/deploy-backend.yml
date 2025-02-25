@@ -32,3 +32,34 @@ jobs:
         with:
           name: backend-test-results
           path: TestResults
+
+  deploy:
+    name: Deploy to AWS
+    runs-on: ubuntu-latest
+    needs: build-and-test  # Ensures deployment runs only if tests pass
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Publish Backend
+        run: dotnet publish -c Release -o out
+
+      - name: Package & Upload to S3
+        run: |
+          cd out
+          zip -r backend.zip .
+          aws s3 cp backend.zip s3://${{ secrets.S3_BUCKET }}/backend.zip
+
+      - name: Trigger AWS CodeDeploy
+        run: |
+          aws deploy create-deployment \
+            --application-name ${{ secrets.CODEDEPLOY_APP_NAME }} \
+            --deployment-group-name ${{ secrets.DEPLOYMENT_GROUP }} \
+            --s3-location bucket=${{ secrets.S3_BUCKET }},key=backend.zip,bundleType=zip
