@@ -9,7 +9,8 @@ hooks:
     - location: scripts/setup.sh
       timeout: 300
       runas: root
+
   ApplicationStart:
     - location: scripts/start.sh
       timeout: 300
-      runas: root
+      runas: ubuntu  

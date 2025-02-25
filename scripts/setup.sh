@@ -14,3 +14,14 @@ echo "Installing Redis..."
 sudo apt install -y redis-server
 sudo systemctl enable redis-server
 sudo systemctl start redis-server
+
+echo "Installing AWS CodeDeploy Agent..."
+cd /home/ubuntu
+sudo apt install -y ruby wget
+wget https://aws-codedeploy-ap-south-1.s3.ap-south-1.amazonaws.com/latest/install -O install
+chmod +x install
+sudo ./install auto
+sudo systemctl enable codedeploy-agent
+sudo systemctl start codedeploy-agent
+
+echo "Setup completed successfully!"

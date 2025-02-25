@@ -1,6 +1,11 @@
 #!/bin/bash
-sudo systemctl stop backend.service || true
-sudo cp -r /var/www/backend /var/www/backend_prev
-cd /var/www/backend
-sudo chmod +x SearchApi.dll
-nohup dotnet SearchApi.dll --urls http://0.0.0.0:5000 > /dev/null 2>&1 &
+set -e  # Exit if any command fails
+
+echo "Starting the backend service..."
+
+# Navigate to deployment directory
+cd /var/www/backend/out
+
+# Run the app in the background and redirect logs
+nohup dotnet SearchApi.dll --urls "http://0.0.0.0:5000" > log.txt 2>&1 &
+echo "Backend is running!"
