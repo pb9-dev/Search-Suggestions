@@ -16,9 +16,8 @@ jobs:
       - name: Install .NET 9
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: 9.0.x  # Ensure .NET 9 is installed
-          include-prerelease: true  # Allow preview versions if needed
-
+          dotnet-version: 9.0.x  
+          include-prerelease: true 
       - name: Restore Dependencies
         run: dotnet restore
 
