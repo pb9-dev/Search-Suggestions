@@ -35,4 +35,4 @@ sleep 30  # Wait to ensure SQL Server is running
 echo "Executing SQL script..."
 /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P 'YourStrong!Passw0rd' -d master -i /var/www/backend/scripts/script.sql
 
-echo "Setup completed."
+echo "Completed."
