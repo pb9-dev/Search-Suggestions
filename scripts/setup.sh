@@ -10,7 +10,7 @@ sudo dpkg -i packages-microsoft-prod.deb
 sudo apt update -y
 sudo apt install -y dotnet-sdk-9.0
 
-echo "Installing Redis..."
+echo "Installing Redis.."
 sudo apt install -y redis-server
 sudo systemctl enable redis-server
 sudo systemctl start redis-server
