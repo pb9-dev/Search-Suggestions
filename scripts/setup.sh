@@ -12,7 +12,7 @@ sudo ./codedeploy-install.sh auto
 sudo systemctl enable codedeploy-agent
 sudo systemctl start codedeploy-agent
 
-echo "Installing .NET 9..."
+echo "Installing .NET 9.."
 wget -q https://packages.microsoft.com/config/ubuntu/22.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
 sudo dpkg -i packages-microsoft-prod.deb
 sudo apt update -y
