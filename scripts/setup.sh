@@ -32,8 +32,13 @@ sudo apt install -y mssql-server
 echo "Configuring SQL Server.."
 sudo MSSQL_SA_PASSWORD='YourStrong!Passw0rd' MSSQL_PID='Express' /opt/mssql/bin/mssql-conf setup accept-eula
 
-echo "Installing SQL Server tools..."
-sudo apt install -y unixodbc-dev msodbcsql18 mssql-tools18
+echo "Installing Microsoft SQL Server tools..."
+curl -fsSL https://packages.microsoft.com/keys/microsoft.asc | sudo tee /etc/apt/trusted.gpg.d/microsoft.asc
+sudo add-apt-repository "$(wget -qO- https://packages.microsoft.com/config/ubuntu/22.04/mssql-server-2022.list)"
+sudo apt update
+sudo apt install -y mssql-tools unixodbc-dev
+
+# Add sqlcmd to PATH for immediate use
 echo 'export PATH="$PATH:/opt/mssql-tools/bin"' >> ~/.bashrc
 source ~/.bashrc
 
