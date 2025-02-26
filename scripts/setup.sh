@@ -21,7 +21,7 @@ sudo add-apt-repository "$(wget -qO- https://packages.microsoft.com/config/ubunt
 sudo apt update -y
 sudo apt install -y mssql-server
 
-echo "Configuring SQL Server..."
+echo "Configuring SQL Server.."
 sudo MSSQL_SA_PASSWORD='YourStrong!Passw0rd' MSSQL_PID='Express' /opt/mssql/bin/mssql-conf setup accept-eula
 
 echo "Installing SQL Server tools..."
