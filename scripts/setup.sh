@@ -4,7 +4,7 @@ set -e  # Exit if any command fails
 echo "Updating packages..."
 sudo apt update -y && sudo apt upgrade -y
 
-echo "Installing AWS CodeDeploy Agent..."
+echo "Installing AWS CodeDeploy Agent.."
 sudo apt install ruby-full -y
 wget https://aws-codedeploy-ap-south-1.s3.ap-south-1.amazonaws.com/latest/install -O codedeploy-install.sh
 chmod +x codedeploy-install.sh
