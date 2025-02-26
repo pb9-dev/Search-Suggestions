@@ -4,6 +4,14 @@ set -e  # Exit if any command fails
 echo "Updating packages..."
 sudo apt update -y && sudo apt upgrade -y
 
+echo "Installing AWS CodeDeploy Agent..."
+sudo apt install ruby-full -y
+wget https://aws-codedeploy-ap-south-1.s3.ap-south-1.amazonaws.com/latest/install -O codedeploy-install.sh
+chmod +x codedeploy-install.sh
+sudo ./codedeploy-install.sh auto
+sudo systemctl enable codedeploy-agent
+sudo systemctl start codedeploy-agent
+
 echo "Installing .NET 9..."
 wget -q https://packages.microsoft.com/config/ubuntu/22.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
 sudo dpkg -i packages-microsoft-prod.deb
