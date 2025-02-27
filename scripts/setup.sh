@@ -1,16 +1,23 @@
 #!/bin/bash
-set -e  # Exit if any command fail
+set -e
 
 echo "Updating packages..."
-sudo apt update -y && sudo apt upgrade -y
+sudo apt update -y
+sudo apt install wget -y
 
+echo "Downloading CodeDeploy installer..."
+AWS_REGION=$(curl -s http://169.254.169.254/latest/meta-data/placement/region)
+cd /tmp
+until sudo wget "https://aws-codedeploy-$AWS_REGION.s3.$AWS_REGION.amazonaws.com/latest/install" -O codedeploy-install.sh; do
+    echo "Retrying download..."
+    sleep 5
+done
 
-sudo apt install ruby-full -y
-wget https://aws-codedeploy-ap-south-1.s3.ap-south-1.amazonaws.com/latest/install -O codedeploy-install.sh
 chmod +x codedeploy-install.sh
 sudo ./codedeploy-install.sh auto
 sudo systemctl enable codedeploy-agent
 sudo systemctl start codedeploy-agent
+
 
 
 wget -q https://packages.microsoft.com/config/ubuntu/22.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
