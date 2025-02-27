@@ -39,7 +39,7 @@ sudo apt install -y mssql-server
 
 # Configure MSSQL
 echo "Configuring MSSQL Server..."
-sudo MSSQL_SA_PASSWORD='abc' MSSQL_PID='Express' /opt/mssql/bin/mssql-conf setup accept-eula
+sudo MSSQL_SA_PASSWORD='Abc@1234' MSSQL_PID='Express' /opt/mssql/bin/mssql-conf setup accept-eula
 sudo systemctl enable mssql-server
 sudo systemctl restart mssql-server
 sleep 30  # Ensure SQL Server has time to start
@@ -65,7 +65,7 @@ fi
 SQL_SCRIPT="/var/www/backend/scripts/script.sql"
 if [ -f "$SQL_SCRIPT" ]; then
     echo "Executing SQL script..."
-    /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P 'abc' -d master -i "$SQL_SCRIPT"
+    /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P 'Abc@1234' -d master -i "$SQL_SCRIPT"
 else
     echo "Warning: SQL script not found at $SQL_SCRIPT. Skipping execution."
 fi
