@@ -3,14 +3,15 @@ os: linux
 files:
   - source: /
     destination: /var/www/backend
+  - source: scripts/
+    destination: /var/www/backend/scripts
 
 hooks:
   BeforeInstall:
     - location: scripts/setup.sh
       timeout: 300
       runas: root
-
   ApplicationStart:
     - location: scripts/start.sh
       timeout: 300
-      runas: root  
+      runas: root
